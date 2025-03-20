@@ -25,7 +25,7 @@ export const getConversations = async (
   try {
     const query = getConversationsQuerySchema.parse(req.query)
     const conversations = await conversationService.getConversations(
-      req.user!.id,
+      req.user.id,
       query
     )
     res.status(200).json(successResponse(conversations))
@@ -43,7 +43,7 @@ export const getConversationById = async (
     const { id } = conversationIdSchema.parse({ id: req.params.id })
     const conversation = await conversationService.getConversationById(
       id,
-      req.user!.id
+      req.user.id
     )
     res.status(200).json(successResponse(conversation))
   } catch (err) {
@@ -59,7 +59,7 @@ export const createDirectConversation = async (
   try {
     const data = createDirectConversationSchema.parse(req.body)
     const conversation = await conversationService.createDirectConversation(
-      req.user!.id,
+      req.user.id,
       data
     )
     res.status(201).json(successResponse(conversation))
@@ -76,7 +76,7 @@ export const createGroupConversation = async (
   try {
     const data = createGroupConversationSchema.parse(req.body)
     const conversation = await conversationService.createGroupConversation(
-      req.user!.id,
+      req.user.id,
       data
     )
     res.status(201).json(successResponse(conversation))
@@ -95,7 +95,7 @@ export const updateGroupDetails = async (
     const data = updateGroupDetailsSchema.parse(req.body)
     const conversation = await conversationService.updateGroupDetails(
       id,
-      req.user!.id,
+      req.user.id,
       data
     )
     res.status(200).json(successResponse(conversation))
@@ -114,7 +114,7 @@ export const addParticipant = async (
     const data = addParticipantSchema.parse(req.body)
     const conversation = await conversationService.addParticipant(
       id,
-      req.user!.id,
+      req.user.id,
       data
     )
     res.status(200).json(successResponse(conversation))
@@ -141,7 +141,7 @@ export const updateParticipantRole = async (
     const conversation = await conversationService.updateParticipantRole(
       id,
       userId,
-      req.user!.id,
+      req.user.id,
       data
     )
     res.status(200).json(successResponse(conversation))
@@ -178,10 +178,7 @@ export const deleteConversation = async (
 ): Promise<void> => {
   try {
     const { id } = conversationIdSchema.parse({ id: req.params.id })
-    const result = await conversationService.deleteConversation(
-      id,
-      req.user!.id
-    )
+    const result = await conversationService.deleteConversation(id, req.user.id)
     res.status(200).json(successResponse(result))
   } catch (err) {
     next(err)

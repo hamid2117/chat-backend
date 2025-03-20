@@ -3,7 +3,7 @@ import CustomError from '../../errors'
 import { isTokenValid } from '../utils'
 import { DecodedToken } from '../types/middleware/auth'
 
-const verifyToken = async (
+export const authenticateUser = async (
   req: Request,
   _res: Response,
   next: NextFunction
@@ -23,4 +23,4 @@ const verifyToken = async (
   }
 }
 
-export default verifyToken
+export default authenticateUser

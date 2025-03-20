@@ -1,6 +1,6 @@
 import express from 'express'
 import conversationController from './conversation.controller'
-import authenticateMiddleware from '../../middlewares/authenticate.middlware'
+import authenticateMiddleware from '../../middlewares/authenticate.middleware'
 
 const router = express.Router()
 
