@@ -1,5 +1,4 @@
 'use strict'
-import { QueryInterface, DataTypes, Sequelize } from 'sequelize'
 
 module.exports = {
   async up(queryInterface, Sequelize) {

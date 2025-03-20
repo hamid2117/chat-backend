@@ -1,11 +1,8 @@
 'use strict'
 
-import { QueryInterface } from 'sequelize'
-import { v4 as uuidv4 } from 'uuid'
-import { USER_IDS } from './20250303025414-seed-users'
-import crypto from 'crypto'
-
-// Define custom interfaces for seeder options
+const { v4: uuidv4 } = require('uuid')
+const { USER_IDS } = require('./20250303025414-seed-users')
+const crypto = require('crypto')
 
 module.exports = {
   up: async (queryInterface) => {

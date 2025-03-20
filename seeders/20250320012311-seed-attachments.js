@@ -1,7 +1,7 @@
 'use strict'
 
-import { v4 as uuidv4 } from 'uuid'
-import { MESSAGE_IDS } from './20250320012221-seed-messages'
+const { MESSAGE_IDS } = require('./20250320012221-seed-messages')
+const { v4: uuidv4 } = require('uuid')
 
 module.exports = {
   up: async (queryInterface) => {

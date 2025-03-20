@@ -44,7 +44,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    // Fix: Changed GroupMetadata to GroupDetails to match the table created in "up"
     await queryInterface.dropTable('GroupDetails')
   },
 }
