@@ -1,29 +1,15 @@
 'use strict'
 
-import { QueryInterface, QueryOptions } from 'sequelize'
+import { QueryInterface } from 'sequelize'
 import { v4 as uuidv4 } from 'uuid'
 import { USER_IDS } from './20250303025414-seed-users'
 import crypto from 'crypto'
 
 // Define custom interfaces for seeder options
-interface BulkInsertOptions extends QueryOptions {
-  ignoreDuplicates?: boolean
-}
-
-interface UserToken {
-  id: string
-  userId: string
-  verificationToken?: string | null
-  verificationExpiresAt?: Date | null
-  passwordResetToken?: string | null
-  passwordResetExpiresAt?: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
-    const userTokens: UserToken[] = [
+  up: async (queryInterface) => {
+    const userTokens = [
       {
         id: uuidv4(),
         userId: USER_IDS.ADMIN,
@@ -68,10 +54,10 @@ module.exports = {
 
     await queryInterface.bulkInsert('UserTokens', userTokens, {
       ignoreDuplicates: true,
-    } as BulkInsertOptions)
+    })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('UserTokens', {}, {})
   },
 }

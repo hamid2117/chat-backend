@@ -1,17 +1,15 @@
 'use strict'
-'use strict'
-import { QueryInterface, DataTypes, Sequelize } from 'sequelize'
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('GroupDetails', {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       conversationId: {
-        type: DataTypes.UUID,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'Conversations',
@@ -21,31 +19,31 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       groupName: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       groupPicture: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
       },
       description: {
-        type: DataTypes.TEXT,
+        type: Sequelize.TEXT,
         allowNull: true,
       },
       createdAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     // Fix: Changed GroupMetadata to GroupDetails to match the table created in "up"
     await queryInterface.dropTable('GroupDetails')
   },

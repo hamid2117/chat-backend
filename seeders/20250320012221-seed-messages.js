@@ -1,30 +1,9 @@
 'use strict'
 
-import { QueryInterface, QueryOptions } from 'sequelize'
 import { v4 as uuidv4 } from 'uuid'
 import { USER_IDS } from './20250303025414-seed-users'
 import { CONVERSATION_IDS } from './20250320012144-seed-conversation'
 
-interface BulkInsertOptions extends QueryOptions {
-  ignoreDuplicates?: boolean
-}
-
-interface Message {
-  id: string
-  conversationId: string
-  senderId: string
-  contentType: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'VIDEO' | 'CODE'
-  textContent?: string | null
-  sentAt: Date
-  editedAt?: Date | null
-  isEdited: boolean
-  isDeleted: boolean
-  deletedAt?: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-// Define constants for message IDs to be used in attachments
 const MESSAGE_IDS = {
   IMAGE_MESSAGE: uuidv4(),
   FILE_MESSAGE: uuidv4(),
@@ -34,15 +13,14 @@ const MESSAGE_IDS = {
 export { MESSAGE_IDS }
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
+  up: async (queryInterface) => {
     // Generate times for messages
     const now = Date.now()
-    const days = (n: number) => n * 24 * 60 * 60 * 1000
-    const hours = (n: number) => n * 60 * 60 * 1000
-    const minutes = (n: number) => n * 60 * 1000
+    const days = (n) => n * 24 * 60 * 60 * 1000
+    const hours = (n) => n * 60 * 60 * 1000
+    const minutes = (n) => n * 60 * 1000
 
-    const messages: Message[] = [
-      // Direct chat between User1 and User2
+    const messages = [
       {
         id: uuidv4(),
         conversationId: CONVERSATION_IDS.DIRECT_1_2,
@@ -197,10 +175,10 @@ module.exports = {
 
     await queryInterface.bulkInsert('Messages', messages, {
       ignoreDuplicates: true,
-    } as BulkInsertOptions)
+    })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Messages', {}, {})
   },
 }

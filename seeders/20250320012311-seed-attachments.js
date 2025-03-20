@@ -1,29 +1,11 @@
 'use strict'
 
-import { QueryInterface, QueryOptions } from 'sequelize'
 import { v4 as uuidv4 } from 'uuid'
 import { MESSAGE_IDS } from './20250320012221-seed-messages'
 
-interface BulkInsertOptions extends QueryOptions {
-  ignoreDuplicates?: boolean
-}
-
-interface Attachment {
-  id: string
-  messageId: string
-  fileUrl: string
-  fileName: string
-  fileType: string
-  fileSize: number
-  uploadedAt: Date
-  createdAt: Date
-  updatedAt: Date
-}
-
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
-    const attachments: Attachment[] = [
-      // Image attachment
+  up: async (queryInterface) => {
+    const attachments = [
       {
         id: uuidv4(),
         messageId: MESSAGE_IDS.IMAGE_MESSAGE,
@@ -67,10 +49,10 @@ module.exports = {
 
     await queryInterface.bulkInsert('Attachments', attachments, {
       ignoreDuplicates: true,
-    } as BulkInsertOptions)
+    })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Attachments', {}, {})
   },
 }

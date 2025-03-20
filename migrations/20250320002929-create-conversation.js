@@ -1,20 +1,19 @@
 'use strict'
-import { QueryInterface, DataTypes, Sequelize } from 'sequelize'
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Conversations', {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       type: {
-        type: DataTypes.ENUM('DIRECT', 'GROUP'),
+        type: Sequelize.ENUM('DIRECT', 'GROUP'),
         allowNull: false,
       },
       createdBy: {
-        type: DataTypes.UUID,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'Users',
@@ -24,19 +23,19 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       createdAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('Conversations')
   },
 }

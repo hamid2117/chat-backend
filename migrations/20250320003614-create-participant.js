@@ -3,15 +3,15 @@
 import { QueryInterface, DataTypes, Sequelize } from 'sequelize'
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Participants', {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       conversationId: {
-        type: DataTypes.UUID,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'Conversations',
@@ -21,7 +21,7 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       userId: {
-        type: DataTypes.UUID,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: 'Users',
@@ -31,38 +31,38 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       role: {
-        type: DataTypes.ENUM('ADMIN', 'MEMBER'),
+        type: Sequelize.ENUM('ADMIN', 'MEMBER'),
         allowNull: false,
         defaultValue: 'MEMBER',
       },
       joinedAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       isRemoved: {
-        type: DataTypes.BOOLEAN,
+        type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,
       },
       removedAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: true,
       },
       createdAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('Participants')
   },
 }

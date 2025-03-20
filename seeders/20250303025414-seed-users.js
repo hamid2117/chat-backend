@@ -1,25 +1,7 @@
 'use strict'
-
-import { QueryInterface, QueryOptions } from 'sequelize'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 
-interface BulkInsertOptions extends QueryOptions {
-  ignoreDuplicates?: boolean
-}
-
-interface User {
-  id: string
-  name: string
-  email: string
-  passwordHash: string
-  isVerified: boolean
-  profilePicture?: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-// Predefined UUIDs for users to maintain relationships
 const USER_IDS = {
   ADMIN: uuidv4(),
   USER1: uuidv4(),
@@ -27,12 +9,11 @@ const USER_IDS = {
   USER3: uuidv4(),
 }
 
-// Export IDs for other seeders to use
 export { USER_IDS }
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
-    const users: User[] = [
+  up: async (queryInterface) => {
+    const users = [
       {
         id: USER_IDS.ADMIN,
         name: 'Admin User',
@@ -77,10 +58,10 @@ module.exports = {
 
     await queryInterface.bulkInsert('Users', users, {
       ignoreDuplicates: true,
-    } as BulkInsertOptions)
+    })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Users', {}, {})
   },
 }

@@ -1,30 +1,11 @@
 'use strict'
-
-import { QueryInterface, QueryOptions } from 'sequelize'
 import { v4 as uuidv4 } from 'uuid'
 import { USER_IDS } from './20250303025414-seed-users'
 import { CONVERSATION_IDS } from './20250320012144-seed-conversation'
 
-interface BulkInsertOptions extends QueryOptions {
-  ignoreDuplicates?: boolean
-}
-
-interface Participant {
-  id: string
-  conversationId: string
-  userId: string
-  role: 'ADMIN' | 'MEMBER'
-  joinedAt: Date
-  isRemoved: boolean
-  removedAt?: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
-    const participants: Participant[] = [
-      // Direct chat between User1 and User2
+  up: async (queryInterface) => {
+    const participants = [
       {
         id: uuidv4(),
         conversationId: CONVERSATION_IDS.DIRECT_1_2,
@@ -121,10 +102,10 @@ module.exports = {
 
     await queryInterface.bulkInsert('Participants', participants, {
       ignoreDuplicates: true,
-    } as BulkInsertOptions)
+    })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Participants', {}, {})
   },
 }

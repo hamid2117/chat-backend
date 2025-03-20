@@ -1,23 +1,8 @@
 'use strict'
 
-import { QueryInterface, QueryOptions } from 'sequelize'
 import { v4 as uuidv4 } from 'uuid'
 import { USER_IDS } from './20250303025414-seed-users'
 
-// Define custom interfaces for seeder options
-interface BulkInsertOptions extends QueryOptions {
-  ignoreDuplicates?: boolean
-}
-
-interface Conversation {
-  id: string
-  type: 'DIRECT' | 'GROUP'
-  createdBy: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-// Predefined UUIDs for conversations
 const CONVERSATION_IDS = {
   DIRECT_1_2: uuidv4(),
   DIRECT_1_3: uuidv4(),
@@ -27,8 +12,8 @@ const CONVERSATION_IDS = {
 export { CONVERSATION_IDS }
 
 module.exports = {
-  up: async (queryInterface: QueryInterface): Promise<void> => {
-    const conversations: Conversation[] = [
+  up: async (queryInterface) => {
+    const conversations = [
       {
         id: CONVERSATION_IDS.DIRECT_1_2,
         type: 'DIRECT',
@@ -54,10 +39,10 @@ module.exports = {
 
     await queryInterface.bulkInsert('Conversations', conversations, {
       ignoreDuplicates: true,
-    } as BulkInsertOptions)
+    })
   },
 
-  down: async (queryInterface: QueryInterface): Promise<void> => {
+  down: async (queryInterface) => {
     await queryInterface.bulkDelete('Conversations', {}, {})
   },
 }
