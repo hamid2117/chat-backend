@@ -133,13 +133,13 @@ export const updateParticipantRole = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id, userId } = participantIdSchema.parse({
+    const { conversationId, userId } = participantIdSchema.parse({
       conversationId: req.params.id,
       userId: req.params.userId,
     })
     const data = updateParticipantRoleSchema.parse(req.body)
     const conversation = await conversationService.updateParticipantRole(
-      id,
+      conversationId,
       userId,
       req.user.id,
       data
@@ -156,12 +156,12 @@ export const removeParticipant = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id, userId } = participantIdSchema.parse({
+    const { conversationId, userId } = participantIdSchema.parse({
       conversationId: req.params.id,
       userId: req.params.userId,
     })
     const result = await conversationService.removeParticipant(
-      id,
+      conversationId,
       userId,
       req.user.id
     )
