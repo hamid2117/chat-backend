@@ -1,4 +1,4 @@
-import { UserWithRole } from './models.types'
+import User from '@/modules/user/user.model'
 
 // Request Types
 export interface RegisterRequest {
@@ -36,7 +36,7 @@ export interface LoginResponseData {
 
 // Service Response Types
 export interface LoginServiceResponse {
-  user: UserWithRole
+  user: User
 }
 
 // Auth Payload

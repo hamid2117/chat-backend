@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+const dotenv = require('dotenv')
 import {
   DatabaseConfig,
   EmailConfig,
@@ -91,5 +91,4 @@ const emailConfig: EmailConfig = {
 }
 
 export { env, dbConfig, emailConfig }
-
 export default dbConfig

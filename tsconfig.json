@@ -23,9 +23,12 @@
   "esModuleInterop": true,
   "skipLibCheck": true,
   "forceConsistentCasingInFileNames": true,
+  "allowSyntheticDefaultImports": true,
   "moduleResolution": "node",
   "resolveJsonModule": true,
-  "sourceMap": true
+  "sourceMap": true,
+  "noImplicitAny": false,
+  "strictPropertyInitialization": false
  },
  "include": [
   "src/**/*",

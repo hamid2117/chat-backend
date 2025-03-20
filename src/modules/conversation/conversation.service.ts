@@ -97,7 +97,7 @@ export const getConversations = async (
   // Format the response data
   const formattedRows = rows.map((conversation) => {
     // For direct chats, get the other user
-    let otherUser = null
+    let otherUser: any = null
     if (conversation.type === 'DIRECT') {
       otherUser = conversation.participants.find(
         (p) => p.userId !== userId
@@ -113,13 +113,13 @@ export const getConversations = async (
       // For direct chats, show the other user's name
       name:
         conversation.type === 'DIRECT'
-          ? otherUser?.name
-          : conversation.groupDetail?.groupName,
+          ? otherUser?.name || 'Unknown User'
+          : conversation.groupDetail?.groupName || 'Unnamed Group',
       // For direct chats, show the other user's profile picture
       picture:
         conversation.type === 'DIRECT'
-          ? otherUser?.profilePicture
-          : conversation.groupDetail?.groupPicture,
+          ? otherUser?.profilePicture || null
+          : conversation.groupDetail?.groupPicture || null,
       description: conversation.groupDetail?.description,
       participants: conversation.participants.map((p) => ({
         userId: p.userId,

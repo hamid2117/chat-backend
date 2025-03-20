@@ -1,5 +1,4 @@
 import { Model, Optional } from 'sequelize'
-import { RoleModel } from '../auth/models.types'
 
 export interface UserAttributes {
   id: number
@@ -22,10 +21,6 @@ export interface UserModel
     UserAttributes {
   readonly createdAt: Date
   readonly updatedAt: Date
-
-  // Association methods
-  getRole?: () => Promise<RoleModel>
-  setRole?: (role: RoleModel | null) => Promise<void>
 }
 
 export interface QueryParams {
