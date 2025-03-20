@@ -1,8 +1,6 @@
-import dotenv from 'dotenv'
+import 'dotenv/config'
 import { Sequelize } from 'sequelize'
 import { dbConfig } from '../../config/config'
-
-dotenv.config()
 
 const env = process.env.NODE_ENV || 'development'
 const config = dbConfig[env as keyof typeof dbConfig] || dbConfig.development

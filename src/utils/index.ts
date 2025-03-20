@@ -1,9 +1,8 @@
 import { createJWT, isTokenValid, attachCookiesToResponse } from './jwt'
-import sendVerificationEmail from './sendVerficationEmail'
-import sendResetPasswordEmail from './sendResetPasswordEmail'
 import createHash from './createHash'
 import { errorResponse, successResponse } from './responseHandler'
 import logger from './logger'
+import { sendResetPasswordEmail, sendVerificationEmail } from './sendEmail'
 
 export {
   createJWT,

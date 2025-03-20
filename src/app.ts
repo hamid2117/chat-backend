@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import 'dotenv/config'
 import express, { Request, Response, NextFunction } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
@@ -11,9 +11,6 @@ import { env } from '../config/config'
 // Import routes
 import authRoutes from './modules/auth/auth.routes'
 import userRoutes from './modules/user/user.routes'
-
-// Initialize dotenv
-dotenv.config()
 
 // Swagger UI setup
 //import swaggerUi from 'swagger-ui-express';

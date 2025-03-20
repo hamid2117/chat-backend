@@ -1,6 +1,6 @@
 .idea
 **/node_modules
-*.env*
+*.env
 public/pdf/*
 public/uploads/*
 public/assets/*

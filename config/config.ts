@@ -1,11 +1,9 @@
-const dotenv = require('dotenv')
+import 'dotenv/config'
 import {
   DatabaseConfig,
   EmailConfig,
   EnvironmentConfig,
 } from '../src/types/config/config'
-
-dotenv.config()
 
 const env: EnvironmentConfig = {
   NODE_ENV: process.env.NODE_ENV || 'development',
@@ -28,7 +26,6 @@ const env: EnvironmentConfig = {
   EMAIL_FROM: process.env.EMAIL_FROM || 'noreply@example.com',
 }
 
-// Database configuration for sequelize-cli
 const dbConfig: DatabaseConfig = {
   development: {
     username: process.env.DB_USERNAME || 'username',
@@ -87,8 +84,7 @@ const emailConfig: EmailConfig = {
           user: env.EMAIL_USER,
           pass: env.EMAIL_PASSWORD,
         }
-      : null, // No auth needed for MailHog
+      : null,
 }
 
 export { env, dbConfig, emailConfig }
-export default dbConfig
