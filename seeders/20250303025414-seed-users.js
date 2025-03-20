@@ -16,7 +16,7 @@ module.exports.up = async (queryInterface) => {
     {
       id: USER_IDS.ADMIN,
       name: 'Admin User',
-      email: 'admin@example.com',
+      email: 'admin@mail.com',
       passwordHash: await bcrypt.hash('password123', 10),
       isVerified: true,
       profilePicture: 'https://randomuser.me/api/portraits/men/1.jpg',
@@ -25,8 +25,8 @@ module.exports.up = async (queryInterface) => {
     },
     {
       id: USER_IDS.USER1,
-      name: 'John Doe',
-      email: 'john@example.com',
+      name: 'user',
+      email: 'user@mail.com',
       passwordHash: await bcrypt.hash('password123', 10),
       isVerified: true,
       profilePicture: 'https://randomuser.me/api/portraits/men/2.jpg',
@@ -35,8 +35,8 @@ module.exports.up = async (queryInterface) => {
     },
     {
       id: USER_IDS.USER2,
-      name: 'Jane Smith',
-      email: 'jane@example.com',
+      name: 'Hamid',
+      email: 'hamid@mail.com',
       passwordHash: await bcrypt.hash('password123', 10),
       isVerified: true,
       profilePicture: 'https://randomuser.me/api/portraits/women/1.jpg',
@@ -45,8 +45,8 @@ module.exports.up = async (queryInterface) => {
     },
     {
       id: USER_IDS.USER3,
-      name: 'Alice Johnson',
-      email: 'alice@example.com',
+      name: 'test',
+      email: 'test@mail.com',
       passwordHash: await bcrypt.hash('password123', 10),
       isVerified: true,
       profilePicture: 'https://randomuser.me/api/portraits/women/2.jpg',

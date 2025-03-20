@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/src/app.js",
-    "dev": "nodemon ts-node --transpile-only src/app.ts",
+    "dev": "nodemon --exec ts-node --transpile-only src/app.ts",
     "lint": "eslint . --ext .ts",
     "test": "jest --coverage",
     "migrate": "npx sequelize-cli db:migrate --config config/sequelize.config.js",
@@ -35,6 +35,7 @@
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.32.1",
+    "socket.io": "^4.8.1",
     "swagger-ui-express": "^4.6.3",
     "uuid": "^11.1.0",
     "winston": "^3.8.2",

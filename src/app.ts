@@ -11,7 +11,7 @@ import { env } from '../config/config'
 // Import routes
 import authRoutes from './modules/auth/auth.routes'
 import userRoutes from './modules/user/user.routes'
-
+import conversationRoutes from './modules/conversation/conversation.routes'
 // Swagger UI setup
 //import swaggerUi from 'swagger-ui-express';
 //import openapiDocument from '../docs/openapi.json';
@@ -32,6 +32,7 @@ app.use(fileUpload())
 // Routes
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/conversation', conversationRoutes)
 
 // 404 handler
 app.use((_req: Request, res: Response, _next: NextFunction) => {
