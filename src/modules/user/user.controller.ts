@@ -101,10 +101,7 @@ export const updateUser = async (
 
     const updateData = updateUserSchema.parse(req.body)
 
-    if (
-      String(id) !== req.user?.id &&
-      !req.user?.permissions.includes('manage_users')
-    ) {
+    if (String(id) !== req.user?.id) {
       throw new CustomError.UnauthorizedError(
         'You are not allowed to update this user'
       )
@@ -117,7 +114,6 @@ export const updateUser = async (
         id: String(user.id),
         name: user.name,
         email: user.email,
-        permissions: req.user.permissions,
       }
       attachCookiesToResponse({ res, user: tokenUser })
     }

@@ -96,11 +96,6 @@ export const getConversations = async (
 
   // Format the response data
   const formattedRows = rows.map((conversation) => {
-    const latestMessage =
-      conversation.messages && conversation.messages.length > 0
-        ? conversation.messages[0]
-        : null
-
     // For direct chats, get the other user
     let otherUser = null
     if (conversation.type === 'DIRECT') {
@@ -128,25 +123,12 @@ export const getConversations = async (
       description: conversation.groupDetail?.description,
       participants: conversation.participants.map((p) => ({
         userId: p.userId,
-        role: p.role,
         user: {
           id: p.user.id,
           name: p.user.name,
           profilePicture: p.user.profilePicture,
         },
       })),
-      latestMessage: latestMessage
-        ? {
-            id: latestMessage.id,
-            content: latestMessage.textContent,
-            contentType: latestMessage.contentType,
-            sender: {
-              id: latestMessage.sender.id,
-              name: latestMessage.sender.name,
-            },
-            sentAt: latestMessage.sentAt,
-          }
-        : null,
     }
   })
 
@@ -160,7 +142,6 @@ export const getConversationById = async (
   conversationId: string,
   userId: string
 ) => {
-  // Check if user is a participant
   const participant = await Participant.findOne({
     where: {
       conversationId,
