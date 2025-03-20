@@ -19,48 +19,4 @@ export interface UserCreationAttributes
 
 export interface UserModel
   extends Model<UserAttributes, UserCreationAttributes>,
-    UserAttributes {
-  role?: RoleModel
-}
-
-export interface UserWithRole extends UserModel {
-  role: RoleWithPermissions
-}
-
-// Role
-export interface RoleAttributes {
-  id: number
-  name: string
-  title: string
-  description?: string
-  accessLevel: string
-}
-
-export interface RoleCreationAttributes
-  extends Optional<RoleAttributes, 'id'> {}
-
-export interface RoleModel
-  extends Model<RoleAttributes, RoleCreationAttributes>,
-    RoleAttributes {
-  permissions?: PermissionModel[]
-}
-
-export interface RoleWithPermissions extends RoleModel {
-  permissions: PermissionModel[]
-}
-
-// Permission
-export interface PermissionAttributes {
-  id: number
-  name: string
-  description?: string
-}
-
-export interface PermissionCreationAttributes
-  extends Optional<PermissionAttributes, 'id'> {}
-
-export interface PermissionModel
-  extends Model<PermissionAttributes, PermissionCreationAttributes>,
-    PermissionAttributes {
-  roles?: RoleModel[]
-}
+    UserAttributes {}

@@ -5,7 +5,6 @@ import { env } from '../../config/config'
 interface JWTPayload {
   id: string
   email: string
-  permissions?: string[]
   [key: string]: any
 }
 
