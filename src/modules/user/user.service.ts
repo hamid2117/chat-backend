@@ -35,14 +35,18 @@ export const updateUser = async (
     delete updateData.passwordHash
   }
 
-  const [rowsUpdated, [updatedUser]] = await User.update(updateData, {
+  const [rowsUpdated] = await User.update(updateData, {
     where: { id },
-    returning: true,
-    plain: true,
   })
 
-  if (rowsUpdated === 0)
+  if (rowsUpdated === 0) {
     throw new CustomError.NotFoundError(`No user with id: ${id}`)
+  }
+
+  const updatedUser = await User.findByPk(id)
+  if (!updatedUser) {
+    throw new CustomError.NotFoundError(`No user with id: ${id}`)
+  }
 
   const userObject = updatedUser.get({ plain: true })
   delete userObject.passwordHash

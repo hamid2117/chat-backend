@@ -12,7 +12,7 @@ type ContentType = 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'VIDEO' | 'CODE'
 interface CreateMessageDTO {
   conversationId: string
   senderId: string
-  contentType?: ContentType
+  contentType: ContentType
   textContent?: string
   attachments?: Array<{
     fileUrl: string
@@ -59,7 +59,7 @@ export const createMessage = async (
       {
         conversationId: messageData.conversationId,
         senderId: messageData.senderId,
-        contentType: messageData.contentType || 'TEXT',
+        contentType: messageData.contentType,
         textContent: messageData.textContent,
       },
       { transaction: t }

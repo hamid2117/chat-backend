@@ -26,7 +26,7 @@ export type CreateGroupConversationRequest = z.infer<
 
 // Update group details schema
 export const updateGroupDetailsSchema = z.object({
-  groupName: z
+  name: z
     .string()
     .min(3, 'Group name must be at least 3 characters')
     .optional(),

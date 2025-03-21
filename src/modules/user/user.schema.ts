@@ -1,13 +1,7 @@
 import { z } from 'zod'
 
 export const userIdSchema = z.object({
-  id: z
-    .string()
-    .or(z.number().int().positive())
-    .transform((val) => Number(val))
-    .refine((val) => !isNaN(val), {
-      message: 'ID must be a valid number',
-    }),
+  id: z.string().uuid(),
 })
 
 export const updateUserSchema = z.object({
@@ -17,6 +11,7 @@ export const updateUserSchema = z.object({
     .max(50, 'Name must be less than 50 characters')
     .optional(),
   email: z.string().email('Invalid email format').optional(),
+  profilePicture: z.string().optional(),
 })
 
 export const updatePasswordSchema = z.object({

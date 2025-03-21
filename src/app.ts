@@ -3,10 +3,10 @@ import express, { Request, Response, NextFunction } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import fileUpload from 'express-fileupload'
 import { logger } from './utils'
 import errorHandler from './middlewares/error.middleware'
 import { env } from '../config/config'
+import path from 'path'
 
 // Import routes
 import authRoutes from './modules/auth/auth.routes'
@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
 app.use(cookieParser(env.JWT_SECRET))
-app.use(fileUpload())
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
 
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
 

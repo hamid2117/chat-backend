@@ -1,6 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import * as userService from './user.service'
-import { successResponse, attachCookiesToResponse } from '../../utils'
+import {
+  successResponse,
+  attachCookiesToResponse,
+  handleFileUpload,
+  getPublicUrl,
+  deleteFile,
+} from '../../utils'
+
 import CustomError from '../../../errors'
 import {
   UserQueryParams,
@@ -14,6 +21,7 @@ import {
   getUsersQuerySchema,
 } from './user.schema'
 import db from '../../../models'
+import { UserModel } from '../../types/modules/user'
 
 export const getAllUsers = async (
   req: Request<{}, {}, {}, UserQueryParams>,
@@ -99,17 +107,45 @@ export const updateUser = async (
   try {
     const { id } = userIdSchema.parse({ id: req.params.id })
 
-    const updateData = updateUserSchema.parse(req.body)
-
     if (String(id) !== req.user?.id) {
       throw new CustomError.UnauthorizedError(
         'You are not allowed to update this user'
       )
     }
 
+    let profilePicturePath: string | null = null
+    let currentUser: UserModel | null = null
+
+    const contentType = req.headers['content-type'] || ''
+    if (contentType.includes('multipart/form-data')) {
+      currentUser = await userService.getUserById(id)
+      if (!currentUser) {
+        throw new CustomError.NotFoundError(`No user with id: ${id}`)
+      }
+
+      profilePicturePath = await handleFileUpload(req, {
+        directory: 'profiles',
+        fieldName: 'profilePicture',
+        fileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+        maxSize: 5 * 1024 * 1024, // 5MB
+      })
+
+      if (profilePicturePath && currentUser.profilePicture) {
+        deleteFile(currentUser.profilePicture)
+      }
+    }
+
+    // Parse and validate the update data
+    const updateData = updateUserSchema.parse({
+      ...req.body,
+      profilePicture: profilePicturePath || undefined,
+    })
+
+    // Update the user
     const user = await userService.updateUser(id, updateData)
 
-    if (String(id) == req.user?.id) {
+    // Generate token and attach to response
+    if (req.body?.email || req.body?.name) {
       const tokenUser = {
         id: String(user.id),
         name: user.name,
@@ -118,12 +154,16 @@ export const updateUser = async (
       attachCookiesToResponse({ res, user: tokenUser })
     }
 
-    res.status(200).json(successResponse(user))
+    let responseData = { ...user }
+    if (user.profilePicture) {
+      responseData.profilePictureUrl = getPublicUrl(req, user.profilePicture)
+    }
+
+    res.status(200).json(successResponse(responseData))
   } catch (err) {
     next(err)
   }
 }
-
 export const updateUserPassword = async (
   req: Request<{}, {}, PasswordUpdateRequest>,
   res: Response,

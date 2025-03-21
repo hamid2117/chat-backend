@@ -6,6 +6,7 @@ export interface UserAttributes {
   email: string
   passwordHash: string
   roleId: number
+  profilePicture?: string | null
   isVerified: boolean
   verificationToken?: string
   verifiedAt?: Date
@@ -44,6 +45,7 @@ export interface UserQueryOptions {
 export interface UpdateUserData {
   name?: string
   email?: string
+  profilePicture?: string
   roleId?: number
   [key: string]: any
 }

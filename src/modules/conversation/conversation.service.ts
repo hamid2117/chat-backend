@@ -431,8 +431,8 @@ export const updateGroupDetails = async (
   }
 
   // Update only the provided fields
-  if (updateData.groupName) {
-    groupDetail.groupName = updateData.groupName
+  if (updateData.name) {
+    groupDetail.name = updateData.name
   }
 
   if (updateData.description !== undefined) {
