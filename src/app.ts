@@ -1,4 +1,6 @@
 import 'dotenv/config'
+import 'express-async-errors'
+
 import express, { Request, Response, NextFunction } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet'
@@ -16,8 +18,8 @@ import messageRoutes from './modules/message/message.routes'
 import { initializeSocket } from './utils/socket'
 import { createServer } from 'http'
 // Swagger UI setup
-//import swaggerUi from 'swagger-ui-express';
-//import openapiDocument from '../docs/openapi.json';
+import swaggerUi from 'swagger-ui-express'
+import openapiDocument from '../docs/openapi.json'
 
 const app = express()
 const httpServer = createServer(app)
@@ -32,7 +34,7 @@ app.use(morgan('dev'))
 app.use(cookieParser(env.JWT_SECRET))
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
 
-//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument))
 
 // Routes
 app.use('/api/v1/auth', authRoutes)

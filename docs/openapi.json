@@ -1,0 +1,1076 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "chat-api",
+    "contact": {},
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register",
+        "operationId": "Register",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/RegisterRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "testtes2t@mail.com",
+                      "name": "candidate",
+                      "password": "123456"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "testtes2t@mail.com",
+                "name": "candidate",
+                "password": "123456"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/auth",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "operationId": "Login",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LoginRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "user@mail.com",
+                      "password": "password123"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "user@mail.com",
+                "password": "password123"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/auth",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/verify-email": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "VerifyEmail",
+        "operationId": "VerifyEmail",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/VerifyEmailRequest"
+                  },
+                  {
+                    "example": {
+                      "verificationToken": "c2a2163fc27d0445e2f153318bee51dcb6cb967eb7a5c9a195b5d435b55b14dfa9d74ef43c4eb985",
+                      "email": "testtes2t@mail.com"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "verificationToken": "c2a2163fc27d0445e2f153318bee51dcb6cb967eb7a5c9a195b5d435b55b14dfa9d74ef43c4eb985",
+                "email": "testtes2t@mail.com"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/auth",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Forgot Password",
+        "operationId": "ForgotPassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ForgotPasswordRequest"
+                  },
+                  {
+                    "example": {
+                      "email": "testtest@mail.com"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "email": "testtest@mail.com"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/auth",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout",
+        "operationId": "Logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/auth",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Reset Password",
+        "operationId": "ResetPassword",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ResetPasswordRequest"
+                  },
+                  {
+                    "example": {
+                      "password": "123456",
+                      "token": "c38701643320902c27a5f75acc8ee8d025534d86efdd6f72f76f05499ce8e86ac0ad7f4014b61c399c4f815e35ba557ffdcf5e5c8d8a62dd3ec3fbdc6c875d8aa3223ab2fbaa",
+                      "email": "testtest@mail.com"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "password": "123456",
+                "token": "c38701643320902c27a5f75acc8ee8d025534d86efdd6f72f76f05499ce8e86ac0ad7f4014b61c399c4f815e35ba557ffdcf5e5c8d8a62dd3ec3fbdc6c875d8aa3223ab2fbaa",
+                "email": "testtest@mail.com"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/auth",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": ["User"],
+        "summary": "ME",
+        "operationId": "ME",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/user",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/697798e9-f3fe-4556-904b-b33d6cf26702": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update User",
+        "operationId": "UpdateUser",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "encoding": {},
+              "schema": {
+                "required": ["profilePicture"],
+                "type": "object",
+                "properties": {
+                  "profilePicture": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/user",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["Conversation"],
+        "summary": "All Chats",
+        "operationId": "AllChats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Message"],
+        "summary": "Create Message",
+        "operationId": "CreateMessage",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateMessageRequest"
+                  },
+                  {
+                    "example": {
+                      "conversationId": "a9f2b072-e6ec-46d2-9af9-6a874dde4543",
+                      "contentType": "TEXT",
+                      "textContent": "testing"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "conversationId": "a9f2b072-e6ec-46d2-9af9-6a874dde4543",
+                "contentType": "TEXT",
+                "textContent": "testing"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/a9f2b072-e6ec-46d2-9af9-6a874dde4543": {
+      "get": {
+        "tags": ["Conversation"],
+        "summary": "A Chat",
+        "operationId": "AChat",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/direct": {
+      "post": {
+        "tags": ["Conversation"],
+        "summary": "Create Direct Chat",
+        "operationId": "CreateDirectChat",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateDirectChatRequest"
+                  },
+                  {
+                    "example": {
+                      "userId": "ad4e3e02-b972-4250-9288-ab21f5126c09"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "userId": "ad4e3e02-b972-4250-9288-ab21f5126c09"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/group": {
+      "post": {
+        "tags": ["Conversation"],
+        "summary": "Create Group Chat",
+        "operationId": "CreateGroupChat",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateGroupChatRequest"
+                  },
+                  {
+                    "example": {
+                      "name": "general",
+                      "participants": ["ad4e3e02-b972-4250-9288-ab21f5126c09"]
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "name": "general",
+                "participants": ["ad4e3e02-b972-4250-9288-ab21f5126c09"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/6175e978-16a9-41c6-8534-8f24fbaffd70": {
+      "post": {
+        "tags": ["Conversation"],
+        "summary": "Update Group Chat",
+        "operationId": "UpdateGroupChat",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateGroupChatRequest"
+                  },
+                  {
+                    "example": {
+                      "userId": "ad4e3e02-b972-4250-9288-ab21f5126c09"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "userId": "ad4e3e02-b972-4250-9288-ab21f5126c09"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Conversation"],
+        "summary": "Del Chat",
+        "operationId": "DelChat",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/6175e978-16a9-41c6-8534-8f24fbaffd70/participants": {
+      "post": {
+        "tags": ["Conversation"],
+        "summary": "Add Participant",
+        "operationId": "AddParticipant",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AddParticipantRequest"
+                  },
+                  {
+                    "example": {
+                      "userId": "2217a00a-8ae9-4e7d-8d4d-eb1737e03c2e"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "userId": "2217a00a-8ae9-4e7d-8d4d-eb1737e03c2e"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/6175e978-16a9-41c6-8534-8f24fbaffd70/participants/ad4e3e02-b972-4250-9288-ab21f5126c09/role": {
+      "patch": {
+        "tags": ["Conversation"],
+        "summary": "Update Participant",
+        "operationId": "UpdateParticipant",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateParticipantRequest"
+                  },
+                  {
+                    "example": {
+                      "role": "ADMIN"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "role": "ADMIN"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/6175e978-16a9-41c6-8534-8f24fbaffd70/participants/ad4e3e02-b972-4250-9288-ab21f5126c09": {
+      "delete": {
+        "tags": ["Conversation"],
+        "summary": "Remove Participant",
+        "operationId": "RemoveParticipant",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/conversation",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/eabb9be5-3357-4c28-912b-9ff03dcb5ec7": {
+      "patch": {
+        "tags": ["Message"],
+        "summary": "Update Message",
+        "operationId": "UpdateMessage",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateMessageRequest"
+                  },
+                  {
+                    "example": {
+                      "textContent": "testing done"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "textContent": "testing done"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/conversation/a9f2b072-e6ec-46d2-9af9-6a874dde4543": {
+      "get": {
+        "tags": ["Message"],
+        "summary": "get Messages",
+        "operationId": "getMessages",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/a7ad6efe-357e-4663-aa16-92fbba313493": {
+      "delete": {
+        "tags": ["Message"],
+        "summary": "Delete Message",
+        "operationId": "DeleteMessage",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      },
+      "get": {
+        "tags": ["Message"],
+        "summary": "A Message",
+        "operationId": "AMessage",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/typing/a9f2b072-e6ec-46d2-9af9-6a874dde4543": {
+      "post": {
+        "tags": ["Message"],
+        "summary": "Typing",
+        "operationId": "Typing",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TypingRequest"
+                  },
+                  {
+                    "example": {
+                      "isTyping": true
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "isTyping": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      }
+    },
+    "/a7ad6efe-357e-4663-aa16-92fbba313493/attachments": {
+      "get": {
+        "tags": ["Message"],
+        "summary": "Message Attachments",
+        "operationId": "MessageAttachments",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false,
+        "servers": [
+          {
+            "url": "http://localhost:3000/api/v1/message",
+            "variables": {}
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegisterRequest": {
+        "title": "RegisterRequest",
+        "required": ["email", "name", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "email": "testtes2t@mail.com",
+          "name": "candidate",
+          "password": "123456"
+        }
+      },
+      "LoginRequest": {
+        "title": "LoginRequest",
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "email": "user@mail.com",
+          "password": "password123"
+        }
+      },
+      "VerifyEmailRequest": {
+        "title": "VerifyEmailRequest",
+        "required": ["verificationToken", "email"],
+        "type": "object",
+        "properties": {
+          "verificationToken": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "verificationToken": "c2a2163fc27d0445e2f153318bee51dcb6cb967eb7a5c9a195b5d435b55b14dfa9d74ef43c4eb985",
+          "email": "testtes2t@mail.com"
+        }
+      },
+      "ForgotPasswordRequest": {
+        "title": "ForgotPasswordRequest",
+        "required": ["email"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "email": "testtest@mail.com"
+        }
+      },
+      "ResetPasswordRequest": {
+        "title": "ResetPasswordRequest",
+        "required": ["password", "token", "email"],
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "password": "123456",
+          "token": "c38701643320902c27a5f75acc8ee8d025534d86efdd6f72f76f05499ce8e86ac0ad7f4014b61c399c4f815e35ba557ffdcf5e5c8d8a62dd3ec3fbdc6c875d8aa3223ab2fbaa",
+          "email": "testtest@mail.com"
+        }
+      },
+      "CreateDirectChatRequest": {
+        "title": "CreateDirectChatRequest",
+        "required": ["userId"],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "userId": "ad4e3e02-b972-4250-9288-ab21f5126c09"
+        }
+      },
+      "CreateGroupChatRequest": {
+        "title": "CreateGroupChatRequest",
+        "required": ["name", "participants"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        },
+        "example": {
+          "name": "general",
+          "participants": ["ad4e3e02-b972-4250-9288-ab21f5126c09"]
+        }
+      },
+      "UpdateGroupChatRequest": {
+        "title": "UpdateGroupChatRequest",
+        "required": ["userId"],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "userId": "ad4e3e02-b972-4250-9288-ab21f5126c09"
+        }
+      },
+      "AddParticipantRequest": {
+        "title": "AddParticipantRequest",
+        "required": ["userId"],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "userId": "2217a00a-8ae9-4e7d-8d4d-eb1737e03c2e"
+        }
+      },
+      "UpdateParticipantRequest": {
+        "title": "UpdateParticipantRequest",
+        "required": ["role"],
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "role": "ADMIN"
+        }
+      },
+      "CreateMessageRequest": {
+        "title": "CreateMessageRequest",
+        "required": ["conversationId", "contentType", "textContent"],
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "textContent": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "conversationId": "a9f2b072-e6ec-46d2-9af9-6a874dde4543",
+          "contentType": "TEXT",
+          "textContent": "testing"
+        }
+      },
+      "UpdateMessageRequest": {
+        "title": "UpdateMessageRequest",
+        "required": ["textContent"],
+        "type": "object",
+        "properties": {
+          "textContent": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "textContent": "testing done"
+        }
+      },
+      "TypingRequest": {
+        "title": "TypingRequest",
+        "required": ["isTyping"],
+        "type": "object",
+        "properties": {
+          "isTyping": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "isTyping": true
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Conversation"
+    },
+    {
+      "name": "Message"
+    }
+  ]
+}

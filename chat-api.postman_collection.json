@@ -1,0 +1,630 @@
+{
+	"info": {
+		"_postman_id": "635fd64b-c8e8-40c0-a831-3ba11c4bc28b",
+		"name": "chat-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24096285"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"testtes2t@mail.com\",\r\n    \"name\":\"candidate\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"user@mail.com\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VerifyEmail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"verificationToken\":\"c2a2163fc27d0445e2f153318bee51dcb6cb967eb7a5c9a195b5d435b55b14dfa9d74ef43c4eb985\",\r\n    \"email\":\"testtes2t@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/verify-email",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"testtest@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/forgot-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/auth/logout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"123456\",\r\n    \"token\":\"c38701643320902c27a5f75acc8ee8d025534d86efdd6f72f76f05499ce8e86ac0ad7f4014b61c399c4f815e35ba557ffdcf5e5c8d8a62dd3ec3fbdc6c875d8aa3223ab2fbaa\",\r\n    \"email\":\"testtest@mail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/reset-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "ME",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/user/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "profilePicture",
+									"type": "file",
+									"src": "/home/qlu/Downloads/back-side-ID.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/user/697798e9-f3fe-4556-904b-b33d6cf26702",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"user",
+								"697798e9-f3fe-4556-904b-b33d6cf26702"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Conversation",
+			"item": [
+				{
+					"name": "All Chats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/conversation",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "A Chat",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/conversation/a9f2b072-e6ec-46d2-9af9-6a874dde4543",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"a9f2b072-e6ec-46d2-9af9-6a874dde4543"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Direct Chat",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\":\"ad4e3e02-b972-4250-9288-ab21f5126c09\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/conversation/direct",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"direct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Group Chat",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"general\",\n    \"participants\":[\"ad4e3e02-b972-4250-9288-ab21f5126c09\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/conversation/group",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"group"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Group Chat",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\":\"ad4e3e02-b972-4250-9288-ab21f5126c09\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/conversation/6175e978-16a9-41c6-8534-8f24fbaffd70",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"6175e978-16a9-41c6-8534-8f24fbaffd70"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Del Chat",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/conversation/6175e978-16a9-41c6-8534-8f24fbaffd70",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"6175e978-16a9-41c6-8534-8f24fbaffd70"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Participant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\":\"2217a00a-8ae9-4e7d-8d4d-eb1737e03c2e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/conversation/6175e978-16a9-41c6-8534-8f24fbaffd70/participants",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"6175e978-16a9-41c6-8534-8f24fbaffd70",
+								"participants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Participant",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\":\"ADMIN\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/conversation/6175e978-16a9-41c6-8534-8f24fbaffd70/participants/ad4e3e02-b972-4250-9288-ab21f5126c09/role",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"6175e978-16a9-41c6-8534-8f24fbaffd70",
+								"participants",
+								"ad4e3e02-b972-4250-9288-ab21f5126c09",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Participant",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/conversation/6175e978-16a9-41c6-8534-8f24fbaffd70/participants/ad4e3e02-b972-4250-9288-ab21f5126c09",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"conversation",
+								"6175e978-16a9-41c6-8534-8f24fbaffd70",
+								"participants",
+								"ad4e3e02-b972-4250-9288-ab21f5126c09"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Message",
+			"item": [
+				{
+					"name": "Create Message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"conversationId\":\"a9f2b072-e6ec-46d2-9af9-6a874dde4543\",\n    \"contentType\":\"TEXT\",\n    \"textContent\":\"testing\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/message/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Message",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"textContent\":\"testing done\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/message/eabb9be5-3357-4c28-912b-9ff03dcb5ec7",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								"eabb9be5-3357-4c28-912b-9ff03dcb5ec7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/message/conversation/a9f2b072-e6ec-46d2-9af9-6a874dde4543",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								"conversation",
+								"a9f2b072-e6ec-46d2-9af9-6a874dde4543"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Message",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/message/a7ad6efe-357e-4663-aa16-92fbba313493",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								"a7ad6efe-357e-4663-aa16-92fbba313493"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Typing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"isTyping\":true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/message/typing/a9f2b072-e6ec-46d2-9af9-6a874dde4543",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								"typing",
+								"a9f2b072-e6ec-46d2-9af9-6a874dde4543"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "A Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/message/a7ad6efe-357e-4663-aa16-92fbba313493",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								"a7ad6efe-357e-4663-aa16-92fbba313493"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Message Attachments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/message/a7ad6efe-357e-4663-aa16-92fbba313493/attachments",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"message",
+								"a7ad6efe-357e-4663-aa16-92fbba313493",
+								"attachments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
