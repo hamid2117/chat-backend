@@ -22,8 +22,8 @@ router.delete('/:messageId', messageController.deleteMessageHandler)
 
 router.get('/:messageId/attachments', messageController.getMessageAttachments)
 
+// emit socket event
 router.post('/typing/:conversationId', messageController.notifyTypingStatus)
-
 router.post('/read/:conversationId', messageController.markAsRead)
 
 export default router

@@ -239,9 +239,6 @@ export const markMessagesAsRead = async (
   userId: string,
   messageIds: string[]
 ): Promise<void> => {
-  // This would interact with a MessageReadStatus model that's not shown in the provided code
-  // For now, we'll just emit a socket event
-
   io().to(`conversation:${conversationId}`).emit('messages_read', {
     conversationId,
     userId,

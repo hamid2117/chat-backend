@@ -49,9 +49,13 @@ export const createMessageSchema = z
     }
   )
 
+export type CreateMessageInput = z.infer<typeof createMessageSchema>
+
 export const updateMessageSchema = z.object({
   textContent: z.string().max(MAX_TEXT_LENGTH).optional(),
 })
+
+export type UpdateMessageInput = z.infer<typeof updateMessageSchema>
 
 export const paginationSchema = z.object({
   limit: z
@@ -66,18 +70,28 @@ export const paginationSchema = z.object({
     .optional(),
 })
 
+export type PaginationParams = z.infer<typeof paginationSchema>
+
 export const messageIdParamSchema = z.object({
   messageId: z.string().uuid(),
 })
+
+export type MessageIdParam = z.infer<typeof messageIdParamSchema>
 
 export const conversationIdParamSchema = z.object({
   conversationId: z.string().uuid(),
 })
 
+export type ConversationIdParam = z.infer<typeof conversationIdParamSchema>
+
 export const typingStatusSchema = z.object({
   isTyping: z.boolean(),
 })
 
+export type TypingStatusInput = z.infer<typeof typingStatusSchema>
+
 export const markAsReadSchema = z.object({
   messageIds: z.array(z.string().uuid()),
 })
+
+export type MarkAsReadInput = z.infer<typeof markAsReadSchema>

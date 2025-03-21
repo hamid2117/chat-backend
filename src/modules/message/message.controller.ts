@@ -8,13 +8,21 @@ import {
   paginationSchema,
   typingStatusSchema,
   markAsReadSchema,
+  // Import the types
+  CreateMessageInput,
+  UpdateMessageInput,
+  PaginationParams,
+  MessageIdParam,
+  ConversationIdParam,
+  TypingStatusInput,
+  MarkAsReadInput,
 } from './message.schema'
 
 export const createMessage = async (
-  req: Request,
+  req: Request<{}, {}, CreateMessageInput>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const validatedData = createMessageSchema.parse(req.body)
     const senderId = req.user.id
@@ -30,7 +38,7 @@ export const createMessage = async (
 
     const message = await messageService.createMessage(messageData)
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Message sent successfully',
       data: message,
@@ -41,12 +49,11 @@ export const createMessage = async (
 }
 
 export const getConversationMessages = async (
-  req: Request,
+  req: Request<ConversationIdParam, {}, {}, PaginationParams>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params and query
     const { conversationId } = conversationIdParamSchema.parse(req.params)
     const { limit = 50, offset = 0 } = paginationSchema.parse(req.query)
 
@@ -56,7 +63,7 @@ export const getConversationMessages = async (
       offset
     )
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Messages retrieved successfully',
       data: {
@@ -74,16 +81,15 @@ export const getConversationMessages = async (
 }
 
 export const getMessage = async (
-  req: Request,
+  req: Request<MessageIdParam>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params
     const { messageId } = messageIdParamSchema.parse(req.params)
     const message = await messageService.getMessageById(messageId)
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Message retrieved successfully',
       data: message,
@@ -94,17 +100,16 @@ export const getMessage = async (
 }
 
 export const updateMessageContent = async (
-  req: Request,
+  req: Request<MessageIdParam, {}, UpdateMessageInput>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params and body
     const { messageId } = messageIdParamSchema.parse(req.params)
     const updateData = updateMessageSchema.parse(req.body)
     const senderId = req.user.id
 
-    // Handle null to undefined conversion if needed for this operation too
+    // Handle null to undefined conversion if needed
     const messageUpdateData = {
       ...updateData,
       textContent:
@@ -117,7 +122,7 @@ export const updateMessageContent = async (
       messageUpdateData
     )
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Message updated successfully',
       data: updatedMessage,
@@ -128,18 +133,17 @@ export const updateMessageContent = async (
 }
 
 export const deleteMessageHandler = async (
-  req: Request,
+  req: Request<MessageIdParam>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params
     const { messageId } = messageIdParamSchema.parse(req.params)
     const senderId = req.user.id
 
     await messageService.deleteMessage(messageId, senderId)
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Message deleted successfully',
     })
@@ -149,16 +153,15 @@ export const deleteMessageHandler = async (
 }
 
 export const getMessageAttachments = async (
-  req: Request,
+  req: Request<MessageIdParam>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params
     const { messageId } = messageIdParamSchema.parse(req.params)
     const attachments = await messageService.getMessageAttachments(messageId)
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Attachments retrieved successfully',
       data: attachments,
@@ -169,19 +172,18 @@ export const getMessageAttachments = async (
 }
 
 export const notifyTypingStatus = async (
-  req: Request,
+  req: Request<ConversationIdParam, {}, TypingStatusInput>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params and body
     const { conversationId } = conversationIdParamSchema.parse(req.params)
     const { isTyping } = typingStatusSchema.parse(req.body)
     const userId = req.user.id
 
     messageService.notifyTyping(userId, conversationId, isTyping)
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Typing status updated',
     })
@@ -191,19 +193,18 @@ export const notifyTypingStatus = async (
 }
 
 export const markAsRead = async (
-  req: Request,
+  req: Request<ConversationIdParam, {}, MarkAsReadInput>,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
-    // Validate params and body
     const { conversationId } = conversationIdParamSchema.parse(req.params)
     const { messageIds } = markAsReadSchema.parse(req.body)
     const userId = req.user.id
 
     await messageService.markMessagesAsRead(conversationId, userId, messageIds)
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Messages marked as read',
     })

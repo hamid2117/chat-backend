@@ -212,16 +212,21 @@ export const getConversationById = async (
         ? otherUser?.profilePicture
         : conversation.groupDetail?.groupPicture,
     description: conversation.groupDetail?.description,
-    participants: conversation.participants.map((p) => ({
-      userId: p.userId,
-      role: p.role,
-      user: {
-        id: p.user.id,
-        name: p.user.name,
-        email: p.user.email,
-        profilePicture: p.user.profilePicture,
-      },
-    })),
+    participants:
+      conversation.type === 'DIRECT'
+        ? conversation.participants.find((data) => {
+            return data.userId !== userId
+          })
+        : conversation.participants.map((p) => ({
+            userId: p.userId,
+            role: p.role,
+            user: {
+              id: p.user.id,
+              name: p.user.name,
+              email: p.user.email,
+              profilePicture: p.user.profilePicture,
+            },
+          })),
     isAdmin: participant.role === 'ADMIN',
   }
 }
