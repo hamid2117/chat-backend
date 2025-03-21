@@ -12,12 +12,17 @@ import path from 'path'
 import authRoutes from './modules/auth/auth.routes'
 import userRoutes from './modules/user/user.routes'
 import conversationRoutes from './modules/conversation/conversation.routes'
+import messageRoutes from './modules/message/message.routes'
+import { initializeSocket } from './utils/socket'
+import { createServer } from 'http'
 // Swagger UI setup
 //import swaggerUi from 'swagger-ui-express';
 //import openapiDocument from '../docs/openapi.json';
 
 const app = express()
+const httpServer = createServer(app)
 
+initializeSocket(httpServer)
 // Middlewares
 app.use(helmet())
 app.use(express.json())
@@ -33,6 +38,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/conversation', conversationRoutes)
+app.use('/api/v1/message', messageRoutes)
 
 // 404 handler
 app.use((_req: Request, res: Response, _next: NextFunction) => {
@@ -45,7 +51,7 @@ app.use(errorHandler)
 // Start the server if not imported by tests
 if (require.main === module) {
   const PORT = env.PORT || 3000
-  app.listen(PORT, () => logger.info(`Server running on port ${PORT}`))
+  httpServer.listen(PORT, () => logger.info(`Server running on port ${PORT}`))
 }
 
 export default app

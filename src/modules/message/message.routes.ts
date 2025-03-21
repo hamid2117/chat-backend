@@ -14,16 +14,16 @@ router.get(
   messageController.getConversationMessages
 )
 
-router.get('/:messageId', messageController.getMessage)
-
 router.patch('/:messageId', messageController.updateMessageContent)
 
 router.delete('/:messageId', messageController.deleteMessageHandler)
 
-router.get('/:messageId/attachments', messageController.getMessageAttachments)
-
 // emit socket event
 router.post('/typing/:conversationId', messageController.notifyTypingStatus)
 router.post('/read/:conversationId', messageController.markAsRead)
+
+// for some cases
+router.get('/:messageId', messageController.getMessage)
+router.get('/:messageId/attachments', messageController.getMessageAttachments)
 
 export default router

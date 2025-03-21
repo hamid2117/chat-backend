@@ -52,7 +52,7 @@ export const createMessage = async (
   transaction?: Transaction
 ): Promise<MessageWithDetails> => {
   const t = transaction || (await Message.sequelize!.transaction())
-
+  let isCommitTransaction: boolean = false
   try {
     // Create the message
     const message = await Message.create(
@@ -80,7 +80,10 @@ export const createMessage = async (
       )
     }
 
-    if (!transaction) await t.commit()
+    if (!transaction) {
+      await t.commit()
+      isCommitTransaction = true
+    }
 
     const messageWithDetails = await getMessageById(message.id)
 
@@ -90,7 +93,7 @@ export const createMessage = async (
 
     return messageWithDetails
   } catch (error) {
-    if (!transaction) await t.rollback()
+    if (!transaction && !isCommitTransaction) await t.rollback()
     throw error
   }
 }
@@ -103,7 +106,7 @@ export const getMessageById = async (
       {
         model: User,
         as: 'sender',
-        attributes: ['id', 'username', 'email', 'profilePicture'],
+        attributes: ['id', 'name', 'email', 'profilePicture'],
       },
       {
         model: Attachment,
@@ -125,7 +128,7 @@ export const getMessagesByConversation = async (
   offset: number = 0
 ): Promise<{ messages: MessageWithDetails[]; count: number }> => {
   const { rows, count } = await Message.findAndCountAll({
-    where: { conversationId },
+    where: { conversationId, isDeleted: false },
     limit,
     offset,
     order: [['sentAt', 'DESC']],
@@ -133,7 +136,7 @@ export const getMessagesByConversation = async (
       {
         model: User,
         as: 'sender',
-        attributes: ['id', 'username', 'email', 'profilePicture'],
+        attributes: ['id', 'name', 'email', 'profilePicture'],
       },
       {
         model: Attachment,

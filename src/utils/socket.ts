@@ -13,12 +13,18 @@ export const initializeSocket = (server: any) => {
   io.on('connection', (socket) => {
     console.log('New client connected:', socket.id)
 
-    socket.on('disconnect', () => {
-      console.log('Client disconnected:', socket.id)
+    socket.on('join_conversation', (conversationId: string) => {
+      socket.join(`conversation:${conversationId}`)
+      console.log(`User joined conversation: ${conversationId}`)
     })
 
-    socket.on('sendMessage', (message) => {
-      io.emit('receiveMessage', message)
+    socket.on('leave_conversation', (conversationId: string) => {
+      socket.leave(`conversation:${conversationId}`)
+      console.log(`User left conversation: ${conversationId}`)
+    })
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected:', socket.id)
     })
   })
 }
