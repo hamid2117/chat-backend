@@ -9,6 +9,7 @@ import { logger } from './utils'
 import errorHandler from './middlewares/error.middleware'
 import { env } from '../config/config'
 import path from 'path'
+import cors from 'cors'
 
 // Import routes
 import authRoutes from './modules/auth/auth.routes'
@@ -27,6 +28,12 @@ const httpServer = createServer(app)
 initializeSocket(httpServer)
 // Middlewares
 app.use(helmet())
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))

@@ -16,7 +16,7 @@ interface ErrorResponse {
 }
 
 const errorHandler = (
-  err: Error & { status?: number } & { errors?: any[] },
+  err: Error & { statusCode?: number } & { errors?: any[] },
   req: Request,
   res: Response,
   _next: NextFunction
@@ -38,16 +38,16 @@ const errorHandler = (
     return
   }
 
-  const status = err.status || 500
+  const status = err.statusCode || 500
   const response: ErrorResponse = {
     success: false,
     message: err.message || 'Internal Server Error',
   }
-  
+
   if (env.NODE_ENV !== 'production') {
     response.stack = err.stack
   }
-  
+
   res.status(status).json(response)
 }
 

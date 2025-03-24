@@ -148,7 +148,8 @@ export const updateUser = async (
     if (req.body?.email || req.body?.name) {
       const tokenUser = {
         id: String(user.id),
-        name: user.name,
+        displayName: user.displayName,
+        userName: user.userName,
         email: user.email,
       }
       attachCookiesToResponse({ res, user: tokenUser })

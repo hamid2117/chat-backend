@@ -70,7 +70,8 @@ export const getAllUsers = async (
   const whereCondition = search
     ? {
         [Op.or]: [
-          { name: { [Op.iLike]: `%${search}%` } },
+          { displayName: { [Op.iLike]: `%${search}%` } },
+          { userName: { [Op.iLike]: `%${search}%` } },
           { email: { [Op.iLike]: `%${search}%` } },
         ],
       }

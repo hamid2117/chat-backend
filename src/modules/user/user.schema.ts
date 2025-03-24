@@ -5,10 +5,15 @@ export const userIdSchema = z.object({
 })
 
 export const updateUserSchema = z.object({
-  name: z
+  displayName: z
     .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name must be less than 50 characters')
+    .min(2, 'Display Name must be at least 2 characters')
+    .max(50, 'Display Name must be less than 50 characters')
+    .optional(),
+  userName: z
+    .string()
+    .min(2, 'Username must be at least 2 characters')
+    .max(50, 'Username must be less than 50 characters')
     .optional(),
   email: z.string().email('Invalid email format').optional(),
   profilePicture: z.string().optional(),
