@@ -59,7 +59,7 @@ export const getConversations = async (
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'name', 'profilePicture'],
+            attributes: ['id', 'displayName', 'profilePicture'],
           },
         ],
       },
@@ -71,7 +71,7 @@ export const getConversations = async (
       {
         model: User,
         as: 'creator',
-        attributes: ['id', 'name'],
+        attributes: ['id', 'displayName'],
       },
       {
         model: Message,
@@ -86,7 +86,7 @@ export const getConversations = async (
           {
             model: User,
             as: 'sender',
-            attributes: ['id', 'name'],
+            attributes: ['id', 'displayName'],
           },
         ],
       },
@@ -125,7 +125,7 @@ export const getConversations = async (
         userId: p.userId,
         user: {
           id: p.user.id,
-          name: p.user.name,
+          displayName: p.user.displayName,
           profilePicture: p.user.profilePicture,
         },
       })),
@@ -170,7 +170,7 @@ export const getConversationById = async (
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'name', 'profilePicture', 'email'],
+            attributes: ['id', 'displayName', 'profilePicture', 'email'],
           },
         ],
       },
@@ -182,7 +182,7 @@ export const getConversationById = async (
       {
         model: User,
         as: 'creator',
-        attributes: ['id', 'name'],
+        attributes: ['id', 'displayName'],
       },
     ],
   })
@@ -222,7 +222,7 @@ export const getConversationById = async (
             role: p.role,
             user: {
               id: p.user.id,
-              name: p.user.name,
+              displayName: p.user.displayName,
               email: p.user.email,
               profilePicture: p.user.profilePicture,
             },

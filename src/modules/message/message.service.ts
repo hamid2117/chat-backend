@@ -106,7 +106,7 @@ export const getMessageById = async (
       {
         model: User,
         as: 'sender',
-        attributes: ['id', 'name', 'email', 'profilePicture'],
+        attributes: ['id', 'displayName', 'email', 'profilePicture'],
       },
       {
         model: Attachment,
@@ -136,7 +136,7 @@ export const getMessagesByConversation = async (
       {
         model: User,
         as: 'sender',
-        attributes: ['id', 'name', 'email', 'profilePicture'],
+        attributes: ['id', 'displayName', 'email', 'profilePicture'],
       },
       {
         model: Attachment,

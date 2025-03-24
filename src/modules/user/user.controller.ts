@@ -55,13 +55,6 @@ export const getSingleUser = async (
           'passwordResetExpires',
         ],
       },
-      include: [
-        {
-          model: db.Role,
-          as: 'role',
-          attributes: ['name'],
-        },
-      ],
     })
 
     if (!user) {
