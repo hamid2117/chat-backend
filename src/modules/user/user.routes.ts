@@ -7,6 +7,9 @@ const router: Router = express.Router()
 router.get('/', authenticateMiddleware, userController.getAllUsers)
 
 router.get('/me', authenticateMiddleware, userController.showCurrentUser)
+router
+  .route('/conversation')
+  .get(authenticateMiddleware, userController.getUsersForConversation)
 router.get('/:id', authenticateMiddleware, userController.getSingleUser)
 
 router.patch('/:id', authenticateMiddleware, userController.updateUser)

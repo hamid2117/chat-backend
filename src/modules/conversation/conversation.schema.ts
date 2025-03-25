@@ -32,6 +32,7 @@ export const updateGroupDetailsSchema = z.object({
     .optional(),
   description: z.string().optional(),
   groupPicture: z.string().url().optional(),
+  participants: z.array(z.string().uuid()).optional(),
 })
 export type UpdateGroupDetailsRequest = z.infer<typeof updateGroupDetailsSchema>
 

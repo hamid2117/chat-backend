@@ -109,7 +109,7 @@ export const createMessage = async (
       ...message,
       attachments: message.attachments?.map((attachment) => ({
         ...attachment,
-        fileUrl: getPublicUrl(req, attachment.fileUrl),
+        fileUrl: getPublicUrl(attachment.fileUrl, req),
       })),
     }
 

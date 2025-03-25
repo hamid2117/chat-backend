@@ -38,6 +38,35 @@ export const getAllUsers = async (
   }
 }
 
+export const getUsersForConversation = async (
+  req: Request<{}, {}, {}, { type: string }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { type } = req.query
+    const currentUserId = req.user?.id
+    if (!currentUserId) {
+      throw new CustomError.UnauthorizedError('Authentication required')
+    }
+
+    if (!type || !['group', 'direct'].includes(type.toLowerCase())) {
+      throw new CustomError.BadRequestError(
+        'Valid conversation type (group or direct) is required'
+      )
+    }
+
+    const users = await userService.getUsersForConversationByType(
+      currentUserId,
+      type.toLowerCase() as 'group' | 'direct'
+    )
+    res.status(200).json(successResponse(users))
+    res.status(200).json(successResponse([]))
+  } catch (err) {
+    next(err)
+  }
+}
+
 export const getSingleUser = async (
   req: Request<{ id: string }>,
   res: Response,
@@ -150,7 +179,7 @@ export const updateUser = async (
 
     let responseData = { ...user }
     if (user.profilePicture) {
-      responseData.profilePictureUrl = getPublicUrl(req, user.profilePicture)
+      responseData.profilePictureUrl = getPublicUrl(user.profilePicture, req)
     }
 
     res.status(200).json(successResponse(responseData))

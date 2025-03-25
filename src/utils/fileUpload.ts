@@ -126,10 +126,12 @@ export const handleFileUpload = (
 }
 
 // Get public URL for a file
-export const getPublicUrl = (req: Request, filePath: string): string => {
+export const getPublicUrl = (filePath: string, req?: Request): string => {
   if (!filePath) return ''
   if (filePath.startsWith('http')) return filePath
-  const baseUrl = `${req.protocol}://${req.get('host')}`
+  const baseUrl = `${req?.protocol || 'http'}://${
+    req?.get('host') || 'localhost'
+  }`
   return `${baseUrl}/${filePath.replace(/^public\//, '')}`
 }
 
@@ -145,7 +147,7 @@ export const handleFileUpdate = async (
     deleteFile(currentFilePath)
   }
 
-  const fileUrl = newFilePath ? getPublicUrl(req, newFilePath) : null
+  const fileUrl = newFilePath ? getPublicUrl(newFilePath, req) : null
 
   return { filePath: newFilePath, fileUrl }
 }
