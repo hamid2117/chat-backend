@@ -31,7 +31,7 @@ export const updateGroupDetailsSchema = z.object({
     .min(3, 'Group name must be at least 3 characters')
     .optional(),
   description: z.string().optional(),
-  groupPicture: z.string().url().optional(),
+  groupPicture: z.string().optional(),
   participants: z.array(z.string().uuid()).optional(),
 })
 export type UpdateGroupDetailsRequest = z.infer<typeof updateGroupDetailsSchema>

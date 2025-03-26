@@ -125,9 +125,24 @@ export const updatePassword = async (
 
 export const getUsersForConversationByType = async (
   currentUserId: string,
-  type: 'group' | 'direct'
+  type: 'group' | 'direct',
+  conversationId?: string
 ): Promise<any[]> => {
   const excludeUserIds = [currentUserId]
+
+  if (conversationId) {
+    const conversationParticipants = await Participant.findAll({
+      where: {
+        conversationId,
+        isRemoved: false,
+      },
+    })
+
+    const participantUserIds = conversationParticipants.map((p) => p.userId)
+    excludeUserIds.push(
+      ...participantUserIds.filter((id) => id !== currentUserId)
+    )
+  }
 
   if (type === 'direct') {
     const userParticipations = await Participant.findAll({
@@ -150,7 +165,6 @@ export const getUsersForConversationByType = async (
     const conversationIds = userParticipations.map((p) => p.conversationId)
 
     if (conversationIds.length > 0) {
-      //  Find all other users in these direct conversations
       const otherParticipants = await Participant.findAll({
         where: {
           conversationId: {
@@ -163,13 +177,11 @@ export const getUsersForConversationByType = async (
         },
       })
 
-      // Add these user IDs to our exclude list
       const otherUserIds = otherParticipants.map((p) => p.userId)
       excludeUserIds.push(...otherUserIds)
     }
   }
 
-  //  Find all users excluding those in excludeUserIds
   const users = await User.findAll({
     where: {
       id: {

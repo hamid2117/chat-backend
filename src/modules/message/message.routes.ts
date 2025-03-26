@@ -1,13 +1,34 @@
 import express from 'express'
 import * as messageController from './message.controller'
 import authenticateMiddleware from '../../middlewares/authenticate.middleware'
+import { uploadMiddleware } from '../..//middlewares/upload.middlware'
 
 const router = express.Router()
 
-// Apply authentication middleware to all conversation routes
 router.use(authenticateMiddleware)
 
 router.post('/', messageController.createMessage)
+
+router.post(
+  '/image',
+  uploadMiddleware({
+    directory: 'messages/images',
+    fieldName: 'image',
+    fileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    maxSize: 10 * 1024 * 1024,
+  }),
+  messageController.createMessage
+)
+
+router.post(
+  '/file',
+  uploadMiddleware({
+    directory: 'messages/files',
+    fieldName: 'file',
+    maxSize: 50 * 1024 * 1024,
+  }),
+  messageController.createMessage
+)
 
 router.get(
   '/conversation/:conversationId',

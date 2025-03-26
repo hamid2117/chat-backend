@@ -60,7 +60,7 @@ export const getConversations = async (
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'displayName', 'profilePicture'],
+            attributes: ['id', 'displayName', 'profilePicture', 'email'],
           },
         ],
       },
@@ -119,8 +119,8 @@ export const getConversations = async (
       // For direct chats, show the other user's profile picture
       picture:
         conversation.type === 'DIRECT'
-          ? otherUser?.profilePicture || null
-          : conversation.groupDetail?.groupPicture || null,
+          ? getPublicUrl(otherUser?.profilePicture) || null
+          : getPublicUrl(conversation.groupDetail?.groupPicture) || null,
       description: conversation.groupDetail?.description,
       participants: conversation.participants.map((p) => ({
         userId: p.userId,
@@ -128,6 +128,7 @@ export const getConversations = async (
           id: p.user.id,
           displayName: p.user.displayName,
           profilePicture: p.user.profilePicture,
+          email: p.user.email,
           profilePictureUrl: getPublicUrl(p.user.profilePicture),
         },
       })),
@@ -211,8 +212,8 @@ export const getConversationById = async (
         : conversation.groupDetail?.groupName,
     picture:
       conversation.type === 'DIRECT'
-        ? otherUser?.profilePicture
-        : conversation.groupDetail?.groupPicture,
+        ? getPublicUrl(otherUser?.profilePicture)
+        : getPublicUrl(conversation.groupDetail?.groupPicture),
     description: conversation.groupDetail?.description,
     participants:
       conversation.type === 'DIRECT'
@@ -226,7 +227,7 @@ export const getConversationById = async (
               id: p.user.id,
               displayName: p.user.displayName,
               email: p.user.email,
-              profilePicture: p.user.profilePicture,
+              profilePicture: getPublicUrl(p.user.profilePicture),
             },
           })),
     isAdmin: participant.role === 'ADMIN',
@@ -311,10 +312,8 @@ export const createGroupConversation = async (
   currentUserId: string,
   { name, description, participants }: CreateGroupConversationRequest
 ) => {
-  // Ensure unique participants
   const uniqueParticipants = [...new Set(participants)]
 
-  // Check if all participants exist
   const users = await User.findAll({
     where: {
       id: {
@@ -327,11 +326,9 @@ export const createGroupConversation = async (
     throw new CustomError.BadRequestError('One or more users do not exist')
   }
 
-  // Create group conversation transaction
   const transaction = await db.sequelize.transaction()
 
   try {
-    // Create conversation
     const conversation = await Conversation.create(
       {
         type: 'GROUP',
@@ -340,7 +337,6 @@ export const createGroupConversation = async (
       { transaction }
     )
 
-    // Create group details
     await GroupDetail.create(
       {
         conversationId: conversation.id,
@@ -350,7 +346,6 @@ export const createGroupConversation = async (
       { transaction }
     )
 
-    // Add creator as admin
     await Participant.create(
       {
         conversationId: conversation.id,
@@ -361,7 +356,6 @@ export const createGroupConversation = async (
       { transaction }
     )
 
-    // Add other participants
     if (uniqueParticipants.length > 0) {
       const participantRecords = uniqueParticipants
         .filter((id) => id !== currentUserId) // Filter out current user, already added as admin
@@ -448,24 +442,29 @@ export const updateGroupDetails = async (
 
     await groupDetail.save({ transaction })
 
-    if (updateData.participants && updateData.participants.length > 0) {
-      const uniqueParticipants = [...new Set(updateData.participants)]
+    if (updateData.participants !== undefined) {
+      const uniqueParticipants = updateData.participants
+        ? [...new Set(updateData.participants)]
+        : []
 
-      const users = await User.findAll({
-        where: {
-          id: {
-            [Op.in]: uniqueParticipants,
+      if (uniqueParticipants.length > 0) {
+        const users = await User.findAll({
+          where: {
+            id: {
+              [Op.in]: uniqueParticipants,
+            },
           },
-        },
-        transaction,
-      })
+          transaction,
+        })
 
-      if (users.length !== uniqueParticipants.length) {
-        await transaction.rollback()
-        throw new CustomError.BadRequestError('One or more users do not exist')
+        if (users.length !== uniqueParticipants.length) {
+          await transaction.rollback()
+          throw new CustomError.BadRequestError(
+            'One or more users do not exist'
+          )
+        }
       }
 
-      // Get existing participants
       const existingParticipants = await Participant.findAll({
         where: {
           conversationId,
@@ -476,10 +475,22 @@ export const updateGroupDetails = async (
 
       const existingParticipantIds = existingParticipants.map((p) => p.userId)
 
-      // Filter out users who are already participants
+      const participantsToRemove = existingParticipants.filter(
+        (p) =>
+          p.userId !== currentUserId && !uniqueParticipants.includes(p.userId)
+      )
+
       const newParticipantIds = uniqueParticipants.filter(
         (id) => !existingParticipantIds.includes(id)
       )
+
+      if (participantsToRemove.length > 0) {
+        for (const participant of participantsToRemove) {
+          participant.isRemoved = true
+          participant.removedAt = new Date()
+          await participant.save({ transaction })
+        }
+      }
 
       if (newParticipantIds.length > 0) {
         const participantRecords = newParticipantIds.map((userId) => ({

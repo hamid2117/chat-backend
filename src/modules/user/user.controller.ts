@@ -39,12 +39,12 @@ export const getAllUsers = async (
 }
 
 export const getUsersForConversation = async (
-  req: Request<{}, {}, {}, { type: string }>,
+  req: Request<{}, {}, {}, { type: string; conversationId?: string }>,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { type } = req.query
+    const { type, conversationId } = req.query
     const currentUserId = req.user?.id
     if (!currentUserId) {
       throw new CustomError.UnauthorizedError('Authentication required')
@@ -58,10 +58,11 @@ export const getUsersForConversation = async (
 
     const users = await userService.getUsersForConversationByType(
       currentUserId,
-      type.toLowerCase() as 'group' | 'direct'
+      type.toLowerCase() as 'group' | 'direct',
+      conversationId
     )
+
     res.status(200).json(successResponse(users))
-    res.status(200).json(successResponse([]))
   } catch (err) {
     next(err)
   }
@@ -105,7 +106,6 @@ export const showCurrentUser = async (
     const user = await userService.getUserById(req.user?.id || '', {
       attributes: {
         exclude: [
-          'id',
           'roleId',
           'passwordHash',
           'verificationToken',

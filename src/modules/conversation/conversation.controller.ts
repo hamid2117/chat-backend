@@ -92,6 +92,21 @@ export const updateGroupDetails = async (
 ): Promise<void> => {
   try {
     const { id } = conversationIdSchema.parse({ id: req.params.id })
+
+    const multerFile = (req as any).file
+
+    if (multerFile && req.filePath) {
+      req.body.groupPicture = req.filePath
+    }
+
+    if (req.body.participants && typeof req.body.participants === 'string') {
+      try {
+        req.body.participants = JSON.parse(req.body.participants)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
     const data = updateGroupDetailsSchema.parse(req.body)
     const conversation = await conversationService.updateGroupDetails(
       id,

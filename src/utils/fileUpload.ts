@@ -4,6 +4,7 @@ import fs from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 import { Request } from 'express'
 import CustomError from '../../errors'
+import { env } from 'process'
 
 // File upload options interface
 export interface FileUploadOptions {
@@ -130,8 +131,8 @@ export const getPublicUrl = (filePath: string, req?: Request): string => {
   if (!filePath) return ''
   if (filePath.startsWith('http')) return filePath
   const baseUrl = `${req?.protocol || 'http'}://${
-    req?.get('host') || 'localhost'
-  }`
+    req?.get('host') || 'localhost:'
+  }${env.PORT}`
   return `${baseUrl}/${filePath.replace(/^public\//, '')}`
 }
 

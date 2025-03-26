@@ -27,7 +27,11 @@ const httpServer = createServer(app)
 
 initializeSocket(httpServer)
 // Middlewares
-app.use(helmet())
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+)
 app.use(
   cors({
     origin: env.ORIGIN,
@@ -39,7 +43,15 @@ app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
 app.use(cookieParser(env.JWT_SECRET))
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')))
+app.use(
+  '/uploads',
+  cors({
+    origin: env.ORIGIN,
+    credentials: true,
+    methods: ['GET', 'HEAD'], // Restrict to read-only methods for static content
+  }),
+  express.static(path.join(__dirname, '../public/uploads'))
+)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument))
 
