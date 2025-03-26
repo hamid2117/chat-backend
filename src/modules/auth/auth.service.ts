@@ -20,7 +20,8 @@ const { User, UserToken } = db
 
 const register = async ({
   email,
-  name,
+  userName,
+  displayName,
   password,
 }: RegisterRequest): Promise<void> => {
   const emailAlreadyExists = await User.findOne({ where: { email } })
@@ -32,7 +33,8 @@ const register = async ({
   const verificationToken = crypto.randomBytes(40).toString('hex')
 
   const user = await User.create({
-    name,
+    userName,
+    displayName,
     email,
     passwordHash,
     isVerified: false,
@@ -47,7 +49,7 @@ const register = async ({
   })
 
   await sendVerificationEmail({
-    name: user.name,
+    name: user.displayName,
     email: user.email,
     verificationToken: verificationToken,
   })
@@ -143,7 +145,7 @@ const forgotPassword = async (email: string): Promise<void> => {
 
     // Send email
     await sendResetPasswordEmail({
-      name: user.name,
+      name: user.displayName,
       email: user.email,
       token: passwordToken,
       origin: env.ORIGIN,

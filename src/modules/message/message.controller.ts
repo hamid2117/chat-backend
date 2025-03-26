@@ -24,72 +24,33 @@ import {
   deleteFile,
 } from '../../utils'
 
+interface MessageAttachment {
+  fileUrl: string
+  fileName: string
+  fileType: string
+  fileSize: number
+}
+
 export const createMessage = async (
   req: Request<{}, {}, CreateMessageInput>,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const contentType = req.headers['content-type'] || ''
-    const hasAttachments = contentType.includes('multipart/form-data')
-
     const validatedData = createMessageSchema.parse(req.body)
     const senderId = req.user.id
 
-    let uploadedAttachments: Array<{
-      fileUrl: string
-      fileName: string
-      fileType: string
-      fileSize: number
-    }> = []
+    let uploadedAttachments: MessageAttachment[] = []
 
-    if (hasAttachments) {
-      if (validatedData.contentType === 'IMAGE') {
-        const filePath = await handleFileUpload(req, {
-          directory: 'messages/images',
-          fieldName: 'image',
-          fileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-          maxSize: 10 * 1024 * 1024, // 10MB
-        })
+    const multerFile = (req as any).file
 
-        if (filePath && req.file) {
-          uploadedAttachments.push({
-            fileUrl: filePath,
-            fileName: req.file.originalname,
-            fileType: req.file.mimetype,
-            fileSize: req.file.size,
-          })
-        }
-      } else if (validatedData.contentType === 'FILE') {
-        const filePath = await handleFileUpload(req, {
-          directory: 'messages/files',
-          fieldName: 'file',
-          maxSize: 50 * 1024 * 1024, // 50MB
-        })
-
-        if (filePath && req.file) {
-          uploadedAttachments.push({
-            fileUrl: filePath,
-            fileName: req.file.originalname,
-            fileType: req.file.mimetype,
-            fileSize: req.file.size,
-          })
-        }
-      } else if (
-        validatedData.contentType === 'TEXT' &&
-        req.files &&
-        Array.isArray(req.files)
-      ) {
-        for (const file of req.files) {
-          // need to handle this by multer to support multiple files
-          uploadedAttachments.push({
-            fileUrl: file.path,
-            fileName: file.originalname,
-            fileType: file.mimetype,
-            fileSize: file.size,
-          })
-        }
-      }
+    if (multerFile && req.filePath) {
+      uploadedAttachments.push({
+        fileUrl: req.filePath,
+        fileName: multerFile.originalname,
+        fileType: multerFile.mimetype,
+        fileSize: multerFile.size,
+      })
     }
 
     const messageData = {
@@ -103,15 +64,7 @@ export const createMessage = async (
         uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
     }
 
-    const message = await messageService.createMessage(messageData)
-
-    const responseData = {
-      ...message,
-      attachments: message.attachments?.map((attachment) => ({
-        ...attachment,
-        fileUrl: getPublicUrl(req, attachment.fileUrl),
-      })),
-    }
+    const responseData = await messageService.createMessage(messageData, req)
 
     res
       .status(201)

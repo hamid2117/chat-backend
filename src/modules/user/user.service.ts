@@ -10,6 +10,8 @@ import {
   UpdateUserData,
   UsersResult,
 } from '../../types/modules/user'
+import Participant from '../conversation/participant.model'
+import Conversation from '../conversation/conversation.model'
 
 const User = db.User
 
@@ -70,7 +72,8 @@ export const getAllUsers = async (
   const whereCondition = search
     ? {
         [Op.or]: [
-          { name: { [Op.iLike]: `%${search}%` } },
+          { displayName: { [Op.iLike]: `%${search}%` } },
+          { userName: { [Op.iLike]: `%${search}%` } },
           { email: { [Op.iLike]: `%${search}%` } },
         ],
       }
@@ -118,4 +121,82 @@ export const updatePassword = async (
   await user.save()
 
   return true
+}
+
+export const getUsersForConversationByType = async (
+  currentUserId: string,
+  type: 'group' | 'direct',
+  conversationId?: string
+): Promise<any[]> => {
+  const excludeUserIds = [currentUserId]
+
+  if (conversationId) {
+    const conversationParticipants = await Participant.findAll({
+      where: {
+        conversationId,
+        isRemoved: false,
+      },
+    })
+
+    const participantUserIds = conversationParticipants.map((p) => p.userId)
+    excludeUserIds.push(
+      ...participantUserIds.filter((id) => id !== currentUserId)
+    )
+  }
+
+  if (type === 'direct') {
+    const userParticipations = await Participant.findAll({
+      where: {
+        userId: currentUserId,
+        isRemoved: false,
+      },
+      include: [
+        {
+          model: Conversation,
+          as: 'conversation',
+          where: {
+            type: 'DIRECT',
+          },
+          required: true,
+        },
+      ],
+    })
+
+    const conversationIds = userParticipations.map((p) => p.conversationId)
+
+    if (conversationIds.length > 0) {
+      const otherParticipants = await Participant.findAll({
+        where: {
+          conversationId: {
+            [Op.in]: conversationIds,
+          },
+          userId: {
+            [Op.ne]: currentUserId,
+          },
+          isRemoved: false,
+        },
+      })
+
+      const otherUserIds = otherParticipants.map((p) => p.userId)
+      excludeUserIds.push(...otherUserIds)
+    }
+  }
+
+  const users = await User.findAll({
+    where: {
+      id: {
+        [Op.notIn]: excludeUserIds,
+      },
+    },
+    attributes: {
+      exclude: [
+        'passwordHash',
+        'verificationToken',
+        'passwordResetToken',
+        'passwordResetExpires',
+      ],
+    },
+  })
+
+  return users
 }

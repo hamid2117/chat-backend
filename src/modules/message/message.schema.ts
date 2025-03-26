@@ -10,44 +10,12 @@ const CONTENT_TYPES = [
   'CODE',
 ] as const
 const MAX_TEXT_LENGTH = 10000
-const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB max
-const MAX_ATTACHMENTS = 10
 
-const attachmentSchema = z.object({
-  fileUrl: z.string().url(),
-  fileName: z.string().max(255),
-  fileType: z.string().max(100),
-  fileSize: z.number().max(MAX_FILE_SIZE),
+export const createMessageSchema = z.object({
+  conversationId: z.string().uuid(),
+  contentType: z.enum(CONTENT_TYPES).default('TEXT'),
+  textContent: z.string().max(MAX_TEXT_LENGTH).nullish(),
 })
-
-export const createMessageSchema = z
-  .object({
-    conversationId: z.string().uuid(),
-    contentType: z.enum(CONTENT_TYPES).default('TEXT'),
-    textContent: z.string().max(MAX_TEXT_LENGTH).nullish(),
-    attachments: z.array(attachmentSchema).max(MAX_ATTACHMENTS).optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.contentType === 'TEXT' && !data.textContent) {
-        return false
-      }
-
-      // File-based messages must have attachments
-      if (
-        ['IMAGE', 'FILE', 'VOICE', 'VIDEO'].includes(data.contentType) &&
-        (!data.attachments || data.attachments.length === 0)
-      ) {
-        return false
-      }
-
-      return true
-    },
-    {
-      message:
-        'Invalid message data: Text messages require text content, and file-based messages require attachments',
-    }
-  )
 
 export type CreateMessageInput = z.infer<typeof createMessageSchema>
 

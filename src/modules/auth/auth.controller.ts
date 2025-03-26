@@ -66,7 +66,7 @@ export const login = async (
     const payload: AuthPayload = {
       id: user.id,
       email: user.email,
-      name: user.name,
+      userName: user.userName,
     }
 
     attachCookiesToResponse({ res, user: payload })
@@ -75,7 +75,8 @@ export const login = async (
       successResponse<LoginResponseData>(
         {
           email: user.email,
-          name: user.name,
+          displayName: user.displayName,
+          userName: user.userName,
           isVarified: user.isVerified,
         },
         'Login successful.'

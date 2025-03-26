@@ -9,6 +9,7 @@ import {
   UpdateParticipantRoleRequest,
   GetConversationsQuery,
 } from './conversation.schema'
+import { getPublicUrl } from '../../utils'
 
 const { User, Conversation, Participant, GroupDetail, Message } = db
 
@@ -59,7 +60,7 @@ export const getConversations = async (
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'name', 'profilePicture'],
+            attributes: ['id', 'displayName', 'profilePicture', 'email'],
           },
         ],
       },
@@ -71,7 +72,7 @@ export const getConversations = async (
       {
         model: User,
         as: 'creator',
-        attributes: ['id', 'name'],
+        attributes: ['id', 'displayName'],
       },
       {
         model: Message,
@@ -86,7 +87,7 @@ export const getConversations = async (
           {
             model: User,
             as: 'sender',
-            attributes: ['id', 'name'],
+            attributes: ['id', 'displayName'],
           },
         ],
       },
@@ -118,15 +119,17 @@ export const getConversations = async (
       // For direct chats, show the other user's profile picture
       picture:
         conversation.type === 'DIRECT'
-          ? otherUser?.profilePicture || null
-          : conversation.groupDetail?.groupPicture || null,
+          ? getPublicUrl(otherUser?.profilePicture) || null
+          : getPublicUrl(conversation.groupDetail?.groupPicture) || null,
       description: conversation.groupDetail?.description,
       participants: conversation.participants.map((p) => ({
         userId: p.userId,
         user: {
           id: p.user.id,
-          name: p.user.name,
+          displayName: p.user.displayName,
           profilePicture: p.user.profilePicture,
+          email: p.user.email,
+          profilePictureUrl: getPublicUrl(p.user.profilePicture),
         },
       })),
     }
@@ -170,7 +173,7 @@ export const getConversationById = async (
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'name', 'profilePicture', 'email'],
+            attributes: ['id', 'displayName', 'profilePicture', 'email'],
           },
         ],
       },
@@ -182,7 +185,7 @@ export const getConversationById = async (
       {
         model: User,
         as: 'creator',
-        attributes: ['id', 'name'],
+        attributes: ['id', 'displayName'],
       },
     ],
   })
@@ -209,8 +212,8 @@ export const getConversationById = async (
         : conversation.groupDetail?.groupName,
     picture:
       conversation.type === 'DIRECT'
-        ? otherUser?.profilePicture
-        : conversation.groupDetail?.groupPicture,
+        ? getPublicUrl(otherUser?.profilePicture)
+        : getPublicUrl(conversation.groupDetail?.groupPicture),
     description: conversation.groupDetail?.description,
     participants:
       conversation.type === 'DIRECT'
@@ -222,9 +225,9 @@ export const getConversationById = async (
             role: p.role,
             user: {
               id: p.user.id,
-              name: p.user.name,
+              displayName: p.user.displayName,
               email: p.user.email,
-              profilePicture: p.user.profilePicture,
+              profilePicture: getPublicUrl(p.user.profilePicture),
             },
           })),
     isAdmin: participant.role === 'ADMIN',
@@ -309,10 +312,8 @@ export const createGroupConversation = async (
   currentUserId: string,
   { name, description, participants }: CreateGroupConversationRequest
 ) => {
-  // Ensure unique participants
   const uniqueParticipants = [...new Set(participants)]
 
-  // Check if all participants exist
   const users = await User.findAll({
     where: {
       id: {
@@ -325,11 +326,9 @@ export const createGroupConversation = async (
     throw new CustomError.BadRequestError('One or more users do not exist')
   }
 
-  // Create group conversation transaction
   const transaction = await db.sequelize.transaction()
 
   try {
-    // Create conversation
     const conversation = await Conversation.create(
       {
         type: 'GROUP',
@@ -338,7 +337,6 @@ export const createGroupConversation = async (
       { transaction }
     )
 
-    // Create group details
     await GroupDetail.create(
       {
         conversationId: conversation.id,
@@ -348,7 +346,6 @@ export const createGroupConversation = async (
       { transaction }
     )
 
-    // Add creator as admin
     await Participant.create(
       {
         conversationId: conversation.id,
@@ -359,7 +356,6 @@ export const createGroupConversation = async (
       { transaction }
     )
 
-    // Add other participants
     if (uniqueParticipants.length > 0) {
       const participantRecords = uniqueParticipants
         .filter((id) => id !== currentUserId) // Filter out current user, already added as admin
@@ -388,7 +384,6 @@ export const updateGroupDetails = async (
   currentUserId: string,
   updateData: UpdateGroupDetailsRequest
 ) => {
-  // Check if conversation exists and is a group
   const conversation = await Conversation.findOne({
     where: {
       id: conversationId,
@@ -400,7 +395,6 @@ export const updateGroupDetails = async (
     throw new CustomError.NotFoundError('Group conversation not found')
   }
 
-  // Check if user is a participant and has admin role
   const participant = await Participant.findOne({
     where: {
       conversationId,
@@ -421,30 +415,101 @@ export const updateGroupDetails = async (
     )
   }
 
-  // Update group details
-  const groupDetail = await GroupDetail.findOne({
-    where: { conversationId },
-  })
+  const transaction = await db.sequelize.transaction()
 
-  if (!groupDetail) {
-    throw new CustomError.NotFoundError('Group details not found')
+  try {
+    const groupDetail = await GroupDetail.findOne({
+      where: { conversationId },
+      transaction,
+    })
+
+    if (!groupDetail) {
+      await transaction.rollback()
+      throw new CustomError.NotFoundError('Group details not found')
+    }
+
+    if (updateData.name) {
+      groupDetail.groupName = updateData.name
+    }
+
+    if (updateData.description !== undefined) {
+      groupDetail.description = updateData.description
+    }
+
+    if (updateData.groupPicture) {
+      groupDetail.groupPicture = updateData.groupPicture
+    }
+
+    await groupDetail.save({ transaction })
+
+    if (updateData.participants !== undefined) {
+      const uniqueParticipants = updateData.participants
+        ? [...new Set(updateData.participants)]
+        : []
+
+      if (uniqueParticipants.length > 0) {
+        const users = await User.findAll({
+          where: {
+            id: {
+              [Op.in]: uniqueParticipants,
+            },
+          },
+          transaction,
+        })
+
+        if (users.length !== uniqueParticipants.length) {
+          await transaction.rollback()
+          throw new CustomError.BadRequestError(
+            'One or more users do not exist'
+          )
+        }
+      }
+
+      const existingParticipants = await Participant.findAll({
+        where: {
+          conversationId,
+          isRemoved: false,
+        },
+        transaction,
+      })
+
+      const existingParticipantIds = existingParticipants.map((p) => p.userId)
+
+      const participantsToRemove = existingParticipants.filter(
+        (p) =>
+          p.userId !== currentUserId && !uniqueParticipants.includes(p.userId)
+      )
+
+      const newParticipantIds = uniqueParticipants.filter(
+        (id) => !existingParticipantIds.includes(id)
+      )
+
+      if (participantsToRemove.length > 0) {
+        for (const participant of participantsToRemove) {
+          participant.isRemoved = true
+          participant.removedAt = new Date()
+          await participant.save({ transaction })
+        }
+      }
+
+      if (newParticipantIds.length > 0) {
+        const participantRecords = newParticipantIds.map((userId) => ({
+          conversationId,
+          userId,
+          role: 'MEMBER',
+          joinedAt: new Date(),
+        }))
+
+        await Participant.bulkCreate(participantRecords, { transaction })
+      }
+    }
+
+    await transaction.commit()
+    return await getConversationById(conversationId, currentUserId)
+  } catch (error) {
+    await transaction.rollback()
+    throw error
   }
-
-  // Update only the provided fields
-  if (updateData.name) {
-    groupDetail.name = updateData.name
-  }
-
-  if (updateData.description !== undefined) {
-    groupDetail.description = updateData.description
-  }
-
-  if (updateData.groupPicture) {
-    groupDetail.groupPicture = updateData.groupPicture
-  }
-
-  await groupDetail.save()
-  return await getConversationById(conversationId, currentUserId)
 }
 
 export const addParticipant = async (

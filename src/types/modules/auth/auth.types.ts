@@ -2,7 +2,8 @@ import User from '@/modules/user/user.model'
 
 // Request Types
 export interface RegisterRequest {
-  name: string
+  displayName: string
+  userName: string
   email: string
   password: string
 }
@@ -30,7 +31,8 @@ export interface ResetPasswordRequest {
 // Response Types
 export interface LoginResponseData {
   email: string
-  name: string
+  displayName: string
+  userName: string
   isVarified: boolean
 }
 
@@ -43,5 +45,5 @@ export interface LoginServiceResponse {
 export interface AuthPayload {
   id: string
   email: string
-  name: string
+  userName: string
 }

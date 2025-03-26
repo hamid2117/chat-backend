@@ -1,6 +1,7 @@
 import express from 'express'
 import conversationController from './conversation.controller'
 import authenticateMiddleware from '../../middlewares/authenticate.middleware'
+import { uploadMiddleware } from '../../middlewares/upload.middlware'
 
 const router = express.Router()
 
@@ -16,7 +17,16 @@ router.post('/direct', conversationController.createDirectConversation)
 router.post('/group', conversationController.createGroupConversation)
 
 // Update group details
-router.patch('/:id', conversationController.updateGroupDetails)
+router.patch(
+  '/:id',
+  uploadMiddleware({
+    directory: 'messages/images',
+    fieldName: 'groupPicture',
+    fileTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    maxSize: 10 * 1024 * 1024,
+  }),
+  conversationController.updateGroupDetails
+)
 router.delete('/:id', conversationController.deleteConversation)
 
 // Participant management

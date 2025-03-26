@@ -3,8 +3,10 @@ import { Server as SocketIOServer } from 'socket.io'
 import Message from './message.model'
 import Attachment from './attachment.model'
 import User from '../user/user.model'
-import Conversation from '../conversation/conversation.model'
 import { getSocket } from '../../utils/socket'
+import { getPublicUrl } from '../../utils'
+import { Request } from 'express'
+import { CreateMessageInput } from './message.schema'
 
 // Types
 type ContentType = 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'VIDEO' | 'CODE'
@@ -49,6 +51,7 @@ const io = (): SocketIOServer => getSocket()
  */
 export const createMessage = async (
   messageData: CreateMessageDTO,
+  req: Request<{}, {}, CreateMessageInput>,
   transaction?: Transaction
 ): Promise<MessageWithDetails> => {
   const t = transaction || (await Message.sequelize!.transaction())
@@ -87,11 +90,19 @@ export const createMessage = async (
 
     const messageWithDetails = await getMessageById(message.id)
 
+    const responseData = {
+      ...messageWithDetails,
+      attachments: messageWithDetails.attachments?.map((attachment) => ({
+        ...attachment,
+        fileUrl: getPublicUrl(attachment.fileUrl, req),
+      })),
+    }
+
     io()
       .to(`conversation:${messageData.conversationId}`)
-      .emit('new_message', messageWithDetails)
+      .emit('new_message', responseData)
 
-    return messageWithDetails
+    return responseData
   } catch (error) {
     if (!transaction && !isCommitTransaction) await t.rollback()
     throw error
@@ -106,7 +117,7 @@ export const getMessageById = async (
       {
         model: User,
         as: 'sender',
-        attributes: ['id', 'name', 'email', 'profilePicture'],
+        attributes: ['id', 'displayName', 'email', 'profilePicture'],
       },
       {
         model: Attachment,
@@ -136,7 +147,7 @@ export const getMessagesByConversation = async (
       {
         model: User,
         as: 'sender',
-        attributes: ['id', 'name', 'email', 'profilePicture'],
+        attributes: ['id', 'displayName', 'email', 'profilePicture'],
       },
       {
         model: Attachment,
@@ -146,7 +157,16 @@ export const getMessagesByConversation = async (
   })
 
   return {
-    messages: rows.map((message) => message.toJSON() as MessageWithDetails),
+    messages: rows
+      .map((message) => message.toJSON() as MessageWithDetails)
+      .map((message) => ({
+        ...message,
+        attachments: message.attachments?.map((attachment) => ({
+          ...attachment,
+          fileUrl: getPublicUrl(attachment.fileUrl),
+        })),
+      }))
+      .reverse(),
     count,
   }
 }

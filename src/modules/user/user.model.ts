@@ -12,7 +12,8 @@ import UserToken from '../auth/userToken.model'
 
 interface UserAttributes {
   id: string
-  name: string
+  displayName: string
+  userName: string
   email: string
   passwordHash: string
   isVerified: boolean
@@ -29,7 +30,8 @@ class User
   implements UserAttributes
 {
   public id!: string
-  public name!: string
+  public userName!: string
+  public displayName!: string
   public email!: string
   public passwordHash!: string
   public isVerified!: boolean
@@ -64,7 +66,11 @@ User.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
+    displayName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    userName: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -2,7 +2,8 @@ import { Model, Optional } from 'sequelize'
 
 export interface UserAttributes {
   id: number
-  name: string
+  displayName: string
+  userName: string
   email: string
   passwordHash: string
   roleId: number

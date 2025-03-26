@@ -38,6 +38,36 @@ export const getAllUsers = async (
   }
 }
 
+export const getUsersForConversation = async (
+  req: Request<{}, {}, {}, { type: string; conversationId?: string }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { type, conversationId } = req.query
+    const currentUserId = req.user?.id
+    if (!currentUserId) {
+      throw new CustomError.UnauthorizedError('Authentication required')
+    }
+
+    if (!type || !['group', 'direct'].includes(type.toLowerCase())) {
+      throw new CustomError.BadRequestError(
+        'Valid conversation type (group or direct) is required'
+      )
+    }
+
+    const users = await userService.getUsersForConversationByType(
+      currentUserId,
+      type.toLowerCase() as 'group' | 'direct',
+      conversationId
+    )
+
+    res.status(200).json(successResponse(users))
+  } catch (err) {
+    next(err)
+  }
+}
+
 export const getSingleUser = async (
   req: Request<{ id: string }>,
   res: Response,
@@ -55,13 +85,6 @@ export const getSingleUser = async (
           'passwordResetExpires',
         ],
       },
-      include: [
-        {
-          model: db.Role,
-          as: 'role',
-          attributes: ['name'],
-        },
-      ],
     })
 
     if (!user) {
@@ -83,7 +106,6 @@ export const showCurrentUser = async (
     const user = await userService.getUserById(req.user?.id || '', {
       attributes: {
         exclude: [
-          'id',
           'roleId',
           'passwordHash',
           'verificationToken',
@@ -148,7 +170,8 @@ export const updateUser = async (
     if (req.body?.email || req.body?.name) {
       const tokenUser = {
         id: String(user.id),
-        name: user.name,
+        displayName: user.displayName,
+        userName: user.userName,
         email: user.email,
       }
       attachCookiesToResponse({ res, user: tokenUser })
@@ -156,7 +179,7 @@ export const updateUser = async (
 
     let responseData = { ...user }
     if (user.profilePicture) {
-      responseData.profilePictureUrl = getPublicUrl(req, user.profilePicture)
+      responseData.profilePictureUrl = getPublicUrl(user.profilePicture, req)
     }
 
     res.status(200).json(successResponse(responseData))
