@@ -24,7 +24,7 @@ module.exports.up = async (queryInterface) => {
       conversationId: CONVERSATION_IDS.DIRECT_1_2,
       senderId: USER_IDS.USER1,
       contentType: 'TEXT',
-      textContent: 'Hey Jane, how are you doing?',
+      textContent: 'Hey Hamza, how are you doing?',
       sentAt: new Date(now - days(6) - hours(2)),
       editedAt: null,
       isEdited: false,
@@ -38,7 +38,8 @@ module.exports.up = async (queryInterface) => {
       conversationId: CONVERSATION_IDS.DIRECT_1_2,
       senderId: USER_IDS.USER2,
       contentType: 'TEXT',
-      textContent: "Hi John! I'm doing well, thanks for asking. How about you?",
+      textContent:
+        "Hi Hamid! I'm doing well, thanks for asking. How about you?",
       sentAt: new Date(now - days(6) - hours(2) + minutes(5)),
       editedAt: null,
       isEdited: false,

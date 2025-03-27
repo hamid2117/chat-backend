@@ -43,6 +43,10 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      lastSeenAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       removedAt: {
         type: Sequelize.DATE,
         allowNull: true,

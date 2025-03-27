@@ -16,6 +16,7 @@ interface ParticipantAttributes {
   joinedAt: Date
   isRemoved: boolean
   removedAt?: Date
+  lastSeenAt?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -43,6 +44,7 @@ class Participant
   public joinedAt!: Date
   public isRemoved!: boolean
   public removedAt?: Date
+  public lastSeenAt?: Date
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -100,6 +102,10 @@ Participant.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
+    },
+    lastSeenAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
     removedAt: {
       type: DataTypes.DATE,

@@ -30,10 +30,12 @@ export interface ResetPasswordRequest {
 
 // Response Types
 export interface LoginResponseData {
+  id: string
   email: string
   displayName: string
   userName: string
-  isVarified: boolean
+  isVerified: boolean
+  profilePicture?: string
 }
 
 // Service Response Types

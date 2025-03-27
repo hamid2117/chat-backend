@@ -131,8 +131,8 @@ export const getPublicUrl = (filePath: string, req?: Request): string => {
   if (!filePath) return ''
   if (filePath.startsWith('http')) return filePath
   const baseUrl = `${req?.protocol || 'http'}://${
-    req?.get('host') || 'localhost:'
-  }${env.PORT}`
+    req?.get('host') || `localhost:${env.PORT}`
+  }`
   return `${baseUrl}/${filePath.replace(/^public\//, '')}`
 }
 

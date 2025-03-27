@@ -28,6 +28,10 @@ const register = async ({
   if (emailAlreadyExists) {
     throw new CustomError.BadRequestError('Email already exists')
   }
+  const userNameAlreadyExists = await User.findOne({ where: { userName } })
+  if (userNameAlreadyExists) {
+    throw new CustomError.BadRequestError('Username already taken')
+  }
 
   const passwordHash = await bcrypt.hash(password, env.SALT_ROUNDS)
   const verificationToken = crypto.randomBytes(40).toString('hex')

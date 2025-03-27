@@ -29,6 +29,8 @@ router.patch(
 )
 router.delete('/:id', conversationController.deleteConversation)
 
+router.post('/:id/seen', conversationController.markConversationSeen)
+
 // Participant management
 router.post('/:id/participants', conversationController.addParticipant)
 router.patch(
