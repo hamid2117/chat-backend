@@ -261,9 +261,11 @@ export const getConversationById = async (
     description: conversation.groupDetail?.description,
     participants:
       conversation.type === 'DIRECT'
-        ? conversation.participants.find((data) => {
-            return data.userId !== userId
-          })
+        ? [
+            conversation.participants.find((data) => {
+              return data.id !== userId
+            }),
+          ]
         : conversation.participants.map((p) => ({
             userId: p.userId,
             role: p.role,
