@@ -79,6 +79,7 @@ export const login = async (
           displayName: user.displayName,
           userName: user.userName,
           isVerified: user.isVerified,
+          profilePicture: user?.profilePicture,
         },
         'Login successful.'
       )

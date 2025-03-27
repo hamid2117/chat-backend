@@ -35,6 +35,7 @@ export interface LoginResponseData {
   displayName: string
   userName: string
   isVerified: boolean
+  profilePicture?: string
 }
 
 // Service Response Types
