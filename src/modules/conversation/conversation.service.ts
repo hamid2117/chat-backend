@@ -282,20 +282,17 @@ export const createDirectConversation = async (
   currentUserId: string,
   { userId }: CreateDirectConversationRequest
 ) => {
-  // Prevent creating chat with self
   if (currentUserId === userId) {
     throw new CustomError.BadRequestError(
       'Cannot create conversation with yourself'
     )
   }
 
-  // Check if other user exists
   const otherUser = await User.findByPk(userId)
   if (!otherUser) {
     throw new CustomError.NotFoundError('User not found')
   }
 
-  // Check if direct conversation already exists between these users
   const existingParticipations = await Participant.findAll({
     where: {
       userId: [currentUserId, userId],
@@ -313,7 +310,6 @@ export const createDirectConversation = async (
     ],
   })
 
-  // Group participations by conversationId and find if both users are in the same conversation
   const conversationCounts = existingParticipations.reduce((acc, p) => {
     acc[p.conversationId] = (acc[p.conversationId] || 0) + 1
     return acc
@@ -322,18 +318,15 @@ export const createDirectConversation = async (
   // If both users are already in a direct conversation
   for (const [conversationId, count] of Object.entries(conversationCounts)) {
     if (count === 2) {
-      // Return the existing conversation
       return await getConversationById(conversationId, currentUserId)
     }
   }
 
-  // Create new direct conversation
   const conversation = await Conversation.create({
     type: 'DIRECT',
     createdBy: currentUserId,
   })
 
-  // Add both users as participants
   await Participant.bulkCreate([
     {
       conversationId: conversation.id,
@@ -349,7 +342,17 @@ export const createDirectConversation = async (
     },
   ])
 
-  return await getConversationById(conversation.id, currentUserId)
+  const conversationDetails = await getConversationById(
+    conversation.id,
+    currentUserId
+  )
+
+  io().to(`user:${userId}`).emit('new_conversation', {
+    conversation: conversationDetails,
+    initiatedBy: currentUserId,
+  })
+
+  return conversationDetails
 }
 
 export const createGroupConversation = async (
@@ -416,7 +419,23 @@ export const createGroupConversation = async (
     }
 
     await transaction.commit()
-    return await getConversationById(conversation.id, currentUserId)
+    const conversationDetails = await getConversationById(
+      conversation.id,
+      currentUserId
+    )
+
+    const allParticipants = [
+      ...uniqueParticipants.filter((id) => id !== currentUserId),
+    ]
+
+    allParticipants.forEach((participantId) => {
+      io().to(`user:${participantId}`).emit('new_conversation', {
+        conversation: conversationDetails,
+        initiatedBy: currentUserId,
+      })
+    })
+
+    return conversationDetails
   } catch (error) {
     await transaction.rollback()
     throw error
