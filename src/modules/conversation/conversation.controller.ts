@@ -200,6 +200,24 @@ export const deleteConversation = async (
   }
 }
 
+export const markConversationSeen = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = conversationIdSchema.parse({ id: req.params.id })
+    await conversationService.markConversationSeen(id, req.user.id)
+
+    res.status(200).json({
+      success: true,
+      message: 'Conversation marked as seen',
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
 export default {
   getConversations,
   getConversationById,
@@ -210,4 +228,5 @@ export default {
   updateParticipantRole,
   removeParticipant,
   deleteConversation,
+  markConversationSeen,
 }

@@ -74,10 +74,11 @@ export const login = async (
     res.status(200).json(
       successResponse<LoginResponseData>(
         {
+          id: user.id,
           email: user.email,
           displayName: user.displayName,
           userName: user.userName,
-          isVarified: user.isVerified,
+          isVerified: user.isVerified,
         },
         'Login successful.'
       )

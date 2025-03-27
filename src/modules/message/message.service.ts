@@ -3,10 +3,12 @@ import { Server as SocketIOServer } from 'socket.io'
 import Message from './message.model'
 import Attachment from './attachment.model'
 import User from '../user/user.model'
+import Participant from '../conversation/participant.model'
 import { getSocket } from '../../utils/socket'
 import { getPublicUrl } from '../../utils'
 import { Request } from 'express'
 import { CreateMessageInput } from './message.schema'
+import { Op } from 'sequelize'
 
 // Types
 type ContentType = 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'VIDEO' | 'CODE'
@@ -98,9 +100,44 @@ export const createMessage = async (
       })),
     }
 
+    const participants = await Participant.findAll({
+      where: {
+        conversationId: messageData.conversationId,
+        userId: { [Op.ne]: messageData.senderId },
+        isRemoved: false,
+      },
+    })
+
+    const unreadCountsPromises = participants.map(async (participant) => {
+      const unreadCount = await Message.count({
+        where: {
+          conversationId: messageData.conversationId,
+          senderId: { [Op.ne]: participant.userId },
+          sentAt: {
+            [Op.gt]: participant.lastSeenAt || new Date(0),
+          },
+          isDeleted: false,
+        },
+      })
+
+      return {
+        userId: participant.userId,
+        unreadCount,
+      }
+    })
+
+    const unreadCounts = await Promise.all(unreadCountsPromises)
+
     io()
       .to(`conversation:${messageData.conversationId}`)
       .emit('new_message', responseData)
+
+    unreadCounts.forEach(({ userId, unreadCount }) => {
+      io().to(`user:${userId}`).emit('unread_count_update', {
+        conversationId: messageData.conversationId,
+        unreadCount,
+      })
+    })
 
     return responseData
   } catch (error) {

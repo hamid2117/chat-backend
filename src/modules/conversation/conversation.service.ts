@@ -10,8 +10,11 @@ import {
   GetConversationsQuery,
 } from './conversation.schema'
 import { getPublicUrl } from '../../utils'
+import { getSocket } from '../../utils/socket'
+import { Server as SocketIOServer } from 'socket.io'
 
 const { User, Conversation, Participant, GroupDetail, Message } = db
+const io = (): SocketIOServer => getSocket()
 
 export const getConversations = async (
   userId: string,
@@ -95,6 +98,46 @@ export const getConversations = async (
     order: [['updatedAt', 'DESC']],
   })
 
+  // Get the participant records to access lastSeenAt timestamps
+  const userParticipations = await Participant.findAll({
+    where: {
+      userId,
+      isRemoved: false,
+      conversationId: { [Op.in]: conversationIds },
+    },
+  })
+
+  // Create a map of conversationId -> lastSeenAt for quick lookup
+  const lastSeenMap = userParticipations.reduce((acc, p) => {
+    acc[p.conversationId] = p.lastSeenAt || new Date(0)
+    return acc
+  }, {} as Record<string, Date>)
+
+  // Calculate unread counts for each conversation
+  const unreadCountPromises = conversationIds.map(async (conversationId) => {
+    const lastSeen = lastSeenMap[conversationId] || new Date(0)
+
+    const count = await Message.count({
+      where: {
+        conversationId,
+        senderId: { [Op.ne]: userId },
+        sentAt: { [Op.gt]: lastSeen },
+        isDeleted: false,
+      },
+    })
+
+    return { conversationId, count }
+  })
+
+  const unreadCounts = await Promise.all(unreadCountPromises)
+  const unreadCountMap = unreadCounts.reduce(
+    (acc, { conversationId, count }) => {
+      acc[conversationId] = count
+      return acc
+    },
+    {} as Record<string, number>
+  )
+
   // Format the response data
   const formattedRows = rows.map((conversation) => {
     // For direct chats, get the other user
@@ -132,6 +175,7 @@ export const getConversations = async (
           profilePictureUrl: getPublicUrl(p.user.profilePicture),
         },
       })),
+      unreadCount: unreadCountMap[conversation.id] || 0,
     }
   })
 
@@ -847,6 +891,29 @@ export const deleteConversation = async (
     throw error
   }
 }
+export const markConversationSeen = async (
+  conversationId: string,
+  userId: string
+): Promise<void> => {
+  // Update the lastSeenAt timestamp
+  await Participant.update(
+    { lastSeenAt: new Date() },
+    {
+      where: {
+        conversationId,
+        userId,
+        isRemoved: false,
+      },
+    }
+  )
+
+  // Emit an update that this user has seen the conversation
+  io().to(`conversation:${conversationId}`).emit('conversation_seen', {
+    conversationId,
+    userId,
+    timestamp: new Date(),
+  })
+}
 
 export default {
   getConversations,
@@ -858,4 +925,5 @@ export default {
   updateParticipantRole,
   removeParticipant,
   deleteConversation,
+  markConversationSeen,
 }
