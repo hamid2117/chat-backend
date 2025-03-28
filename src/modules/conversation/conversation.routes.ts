@@ -5,9 +5,6 @@ import { uploadMiddleware } from '../../middlewares/upload.middlware'
 
 const router = express.Router()
 
-// Apply authentication middleware to all conversation routes
-router.use(authenticateMiddleware)
-
 router.get('/', conversationController.getConversations)
 
 router.get('/:id', conversationController.getConversationById)
