@@ -20,9 +20,8 @@ export const getConversations = async (
   userId: string,
   query: GetConversationsQuery
 ) => {
-  const { limit, offset, search, type } = query
+  const { limit, offset, search: _serach, type } = query
 
-  // Find all conversations where user is a participant
   const participations = await Participant.findAll({
     where: {
       userId,
@@ -37,17 +36,14 @@ export const getConversations = async (
     return { rows: [], count: 0 }
   }
 
-  // Build where clause
   const whereClause: any = {
     id: { [Op.in]: conversationIds },
   }
 
-  // Add type filter if provided
   if (type) {
     whereClause.type = type
   }
 
-  // Get conversations with latest message and participants
   const { rows, count } = await Conversation.findAndCountAll({
     where: whereClause,
     limit,
@@ -98,7 +94,6 @@ export const getConversations = async (
     order: [['updatedAt', 'DESC']],
   })
 
-  // Get the participant records to access lastSeenAt timestamps
   const userParticipations = await Participant.findAll({
     where: {
       userId,
@@ -113,7 +108,6 @@ export const getConversations = async (
     return acc
   }, {} as Record<string, Date>)
 
-  // Calculate unread counts for each conversation
   const unreadCountPromises = conversationIds.map(async (conversationId) => {
     const lastSeen = lastSeenMap[conversationId] || new Date(0)
 
@@ -138,9 +132,7 @@ export const getConversations = async (
     {} as Record<string, number>
   )
 
-  // Format the response data
   const formattedRows = rows.map((conversation) => {
-    // For direct chats, get the other user
     let otherUser: any = null
     if (conversation.type === 'DIRECT') {
       otherUser = conversation.participants.find(
@@ -154,12 +146,10 @@ export const getConversations = async (
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
       createdBy: conversation.creator,
-      // For direct chats, show the other user's name
       name:
         conversation.type === 'DIRECT'
           ? otherUser?.name || 'Unknown User'
           : conversation.groupDetail?.groupName || 'Unnamed Group',
-      // For direct chats, show the other user's profile picture
       picture:
         conversation.type === 'DIRECT'
           ? getPublicUrl(otherUser?.profilePicture) || null
@@ -238,7 +228,6 @@ export const getConversationById = async (
     throw new CustomError.NotFoundError('Conversation not found')
   }
 
-  // Format the response data
   const otherUser =
     conversation.type === 'DIRECT'
       ? conversation.participants.find((p) => p.userId !== userId)?.user
@@ -582,13 +571,11 @@ export const addParticipant = async (
   currentUserId: string,
   { userId, role }: AddParticipantRequest
 ) => {
-  // Check if conversation exists
   const conversation = await Conversation.findByPk(conversationId)
   if (!conversation) {
     throw new CustomError.NotFoundError('Conversation not found')
   }
 
-  // For direct conversations, only allow 2 participants
   if (conversation.type === 'DIRECT') {
     const participantCount = await Participant.count({
       where: {
@@ -604,7 +591,6 @@ export const addParticipant = async (
     }
   }
 
-  // Check if current user is a participant and has admin role
   const currentParticipant = await Participant.findOne({
     where: {
       conversationId,
@@ -623,13 +609,11 @@ export const addParticipant = async (
     throw new CustomError.UnauthorizedError('Only admins can add participants')
   }
 
-  // Check if user to add exists
   const user = await User.findByPk(userId)
   if (!user) {
     throw new CustomError.NotFoundError('User not found')
   }
 
-  // Check if user is already a participant
   const existingParticipant = await Participant.findOne({
     where: {
       conversationId,
@@ -649,7 +633,6 @@ export const addParticipant = async (
       throw new CustomError.BadRequestError('User is already a participant')
     }
   } else {
-    // Create new participant
     await Participant.create({
       conversationId,
       userId,
@@ -667,13 +650,11 @@ export const updateParticipantRole = async (
   currentUserId: string,
   { role }: UpdateParticipantRoleRequest
 ) => {
-  // Check if conversation exists
   const conversation = await Conversation.findByPk(conversationId)
   if (!conversation) {
     throw new CustomError.NotFoundError('Conversation not found')
   }
 
-  // Verify current user is admin
   const currentParticipant = await Participant.findOne({
     where: {
       conversationId,
@@ -694,7 +675,6 @@ export const updateParticipantRole = async (
     )
   }
 
-  // Find participant to update
   const participant = await Participant.findOne({
     where: {
       conversationId,
@@ -707,7 +687,6 @@ export const updateParticipantRole = async (
     throw new CustomError.NotFoundError('Participant not found')
   }
 
-  // Update role
   participant.role = role
   await participant.save()
 
@@ -719,20 +698,17 @@ export const removeParticipant = async (
   participantUserId: string,
   currentUserId: string
 ) => {
-  // Check if conversation exists
   const conversation = await Conversation.findByPk(conversationId)
   if (!conversation) {
     throw new CustomError.NotFoundError('Conversation not found')
   }
 
-  // Direct conversations cannot have participants removed (they end the conversation)
   if (conversation.type === 'DIRECT') {
     throw new CustomError.BadRequestError(
       'Cannot remove participants from direct conversations'
     )
   }
 
-  // Verify current user has permission (is admin or removing self)
   const currentParticipant = await Participant.findOne({
     where: {
       conversationId,
@@ -756,7 +732,6 @@ export const removeParticipant = async (
     )
   }
 
-  // Find participant to remove
   const participant = await Participant.findOne({
     where: {
       conversationId,
@@ -769,7 +744,6 @@ export const removeParticipant = async (
     throw new CustomError.NotFoundError('Participant not found')
   }
 
-  // If the last admin is leaving, promote another member to admin if possible
   if (isAdmin && isSelfRemoval) {
     const adminCount = await Participant.count({
       where: {
@@ -796,17 +770,14 @@ export const removeParticipant = async (
     }
   }
 
-  // Remove participant (soft delete)
   participant.isRemoved = true
   participant.removedAt = new Date()
   await participant.save()
 
-  // If removing self, return success
   if (isSelfRemoval) {
     return { success: true, message: 'You have left the conversation' }
   }
 
-  // Otherwise return updated conversation
   return await getConversationById(conversationId, currentUserId)
 }
 
@@ -814,13 +785,11 @@ export const deleteConversation = async (
   conversationId: string,
   currentUserId: string
 ) => {
-  // Check if conversation exists
   const conversation = await Conversation.findByPk(conversationId)
   if (!conversation) {
     throw new CustomError.NotFoundError('Conversation not found')
   }
 
-  // Check if user is creator or admin
   const participant = await Participant.findOne({
     where: {
       conversationId,
@@ -844,7 +813,6 @@ export const deleteConversation = async (
     )
   }
 
-  // For direct conversations, just mark all participants as removed
   if (conversation.type === 'DIRECT') {
     await Participant.update(
       {
@@ -861,17 +829,14 @@ export const deleteConversation = async (
     return { success: true, message: 'Conversation deleted successfully' }
   }
 
-  // For group conversations, delete the conversation, group details, and participants
   const transaction = await db.sequelize.transaction()
 
   try {
-    // Delete group details
     await GroupDetail.destroy({
       where: { conversationId },
       transaction,
     })
 
-    // Mark all participants as removed
     await Participant.update(
       {
         isRemoved: true,
@@ -886,7 +851,6 @@ export const deleteConversation = async (
       }
     )
 
-    // Mark all messages as deleted
     await Message.update(
       {
         isDeleted: true,
@@ -901,7 +865,6 @@ export const deleteConversation = async (
       }
     )
 
-    // Soft delete the conversation itself
     conversation.updatedAt = new Date()
     await conversation.save({ transaction })
 
@@ -928,7 +891,6 @@ export const markConversationSeen = async (
     }
   )
 
-  // Emit an update that this user has seen the conversation
   io().to(`conversation:${conversationId}`).emit('conversation_seen', {
     conversationId,
     userId,

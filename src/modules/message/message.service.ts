@@ -10,7 +10,6 @@ import { Request } from 'express'
 import { CreateMessageInput } from './message.schema'
 import { Op } from 'sequelize'
 
-// Types
 type ContentType = 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'VIDEO' | 'CODE'
 
 interface CreateMessageDTO {
@@ -59,7 +58,6 @@ export const createMessage = async (
   const t = transaction || (await Message.sequelize!.transaction())
   let isCommitTransaction: boolean = false
   try {
-    // Create the message
     const message = await Message.create(
       {
         conversationId: messageData.conversationId,
@@ -70,7 +68,6 @@ export const createMessage = async (
       { transaction: t }
     )
 
-    // Create attachments if provided
     if (messageData.attachments && messageData.attachments.length > 0) {
       await Promise.all(
         messageData.attachments.map((attachment) =>

@@ -1,6 +1,5 @@
 import { Server } from 'socket.io'
 import conversationService from '../modules/conversation/conversation.service'
-import { env } from '../../config/config'
 let io: Server
 
 export const initializeSocket = (server: any) => {

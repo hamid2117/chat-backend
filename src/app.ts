@@ -48,7 +48,7 @@ app.use(
   cors({
     origin: env.ORIGIN,
     credentials: true,
-    methods: ['GET', 'HEAD'], // Restrict to read-only methods for static content
+    methods: ['GET', 'HEAD'], // Restrict to read-only  for static
   }),
   express.static(path.join(__dirname, '../public/uploads'))
 )
@@ -69,7 +69,6 @@ app.use((_req: Request, res: Response, _next: NextFunction) => {
 // Global error handler
 app.use(errorHandler)
 
-// Start the server if not imported by tests
 if (require.main === module) {
   const PORT = env.PORT || 3000
   httpServer.listen(PORT, () => logger.info(`Server running on port ${PORT}`))
