@@ -12,10 +12,8 @@ import path from 'path'
 import cors from 'cors'
 
 // Import routes
-import authRoutes from './modules/auth/auth.routes'
-import userRoutes from './modules/user/user.routes'
-import conversationRoutes from './modules/conversation/conversation.routes'
-import messageRoutes from './modules/message/message.routes'
+import routes from './routes'
+// Import socket initialization
 import { initializeSocket } from './utils/socket'
 import { createServer } from 'http'
 // Swagger UI setup
@@ -56,10 +54,7 @@ app.use(
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiDocument))
 
 // Routes
-app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/user', userRoutes)
-app.use('/api/v1/conversation', conversationRoutes)
-app.use('/api/v1/message', messageRoutes)
+app.use(routes)
 
 // 404 handler
 app.use((_req: Request, res: Response, _next: NextFunction) => {
