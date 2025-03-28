@@ -1,11 +1,8 @@
 import express from 'express'
 import * as messageController from './message.controller'
-import authenticateMiddleware from '../../middlewares/authenticate.middleware'
 import { uploadMiddleware } from '../..//middlewares/upload.middlware'
 
 const router = express.Router()
-
-router.use(authenticateMiddleware)
 
 router.post('/', messageController.createMessage)
 

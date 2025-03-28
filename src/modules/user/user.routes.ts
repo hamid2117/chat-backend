@@ -1,23 +1,16 @@
 import express, { Router } from 'express'
 import * as userController from './user.controller'
-import authenticateMiddleware from '../../middlewares/authenticate.middleware'
 
 const router: Router = express.Router()
 
-router.get('/', authenticateMiddleware, userController.getAllUsers)
+router.get('/', userController.getAllUsers)
 
-router.get('/me', authenticateMiddleware, userController.showCurrentUser)
-router
-  .route('/conversation')
-  .get(authenticateMiddleware, userController.getUsersForConversation)
-router.get('/:id', authenticateMiddleware, userController.getSingleUser)
+router.get('/me', userController.showCurrentUser)
+router.get('conversation', userController.getUsersForConversation)
+router.get('/:id', userController.getSingleUser)
 
-router.patch('/:id', authenticateMiddleware, userController.updateUser)
+router.patch('/:id', userController.updateUser)
 
-router.post(
-  '/update-password',
-  authenticateMiddleware,
-  userController.updateUserPassword
-)
+router.post('/update-password', userController.updateUserPassword)
 
 export default router
